@@ -1,0 +1,173 @@
+@import '../../../styles/helvetica/dark-vars.scss';
+
+.form {
+  --text-color: #333;
+  --placeholder-color: #999;
+  --background-color: #fff;
+
+  :global(.dark-theme) & {
+    --text-color: #{$text-color};
+    --placeholder-color: #777;
+    --background-color: #{$bg-color};
+  }
+
+  input::placeholder {
+    color: var(--placeholder-color);
+  }
+
+  label {
+    margin-bottom: 0;
+    font-weight: normal;
+  }
+
+  :global(.checkbox) {
+    margin: 0;
+  }
+}
+
+.section {
+  margin-bottom: 1.5em;
+}
+
+.sectionSticky {
+  @media (max-width: 767px) {
+    position: sticky;
+    bottom: 0;
+    padding: 0.5em 0;
+    margin: -0.5em 0 1em;
+    background: var(--background-color);
+  }
+}
+
+.sectionTitle {
+  border-bottom: none;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.searchInputBox {
+  display: flex;
+  gap: 0.3em;
+
+  button {
+    padding-inline: 2em;
+    display: none;
+
+    @media (min-width: 768px) {
+      display: block;
+    }
+  }
+}
+
+.searchScopes {
+  margin-top: 0.5em;
+  display: flex;
+
+  label {
+    margin-left: 0.6em;
+    display: inline-flex;
+    gap: 0.4em;
+    cursor: pointer;
+  }
+}
+
+.columns {
+  display: flex;
+  gap: 0.4em;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .columns {
+    display: grid;
+    gap: 0.2em 2em;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(var(--n-rows), 1fr);
+  }
+}
+
+.inputRow {
+  display: flex;
+  gap: 0 0.5em;
+  flex-direction: column;
+
+  @media (min-width: 450px) {
+    flex-direction: row;
+    align-items: center;
+
+    & > *:first-child {
+      flex: 0 0 50%;
+    }
+
+    & > *:last-child {
+      flex: 1;
+    }
+  }
+}
+
+.intervalBox {
+  display: flex;
+  gap: 0.25em;
+
+  & > *:first-child {
+    flex: 0 0 50%;
+  }
+
+  & > *:last-child {
+    flex: 1;
+  }
+}
+
+.expandIcon {
+  opacity: 0.6;
+}
+
+.textInputBox {
+  position: relative;
+}
+
+.autocompleteBox {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    min-width: 16em;
+  }
+}
+
+.selector {
+  color: var(--placeholder-color) !important;
+
+  option[value=''] {
+    color: var(--placeholder-color);
+  }
+
+  option:not([value='']) {
+    color: var(--text-color);
+  }
+}
+
+.selectorChosen {
+  color: var(--text-color) !important;
+}
+
+.textInput {
+  color: var(--placeholder-color) !important;
+}
+
+.textInputChosen {
+  color: var(--text-color) !important;
+}
+
+.bigSearchButton {
+  width: 100%;
+
+  @media (min-width: 768px) {
+    // Width of one column of the form
+    width: calc(50% - 1em);
+  }
+}

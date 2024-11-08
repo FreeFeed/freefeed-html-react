@@ -12,8 +12,11 @@ import { ButtonLink } from './button-link';
 import { Icon } from './fontawesome-icons';
 import { SignInLink } from './sign-in-link';
 
-const SearchFormAdvanced = lazyComponent(
-  () => import('./search-form-advanced').then((m) => ({ default: m.SearchFormAdvanced })),
+const AdvancedSearchForm = lazyComponent(
+  () =>
+    import('./advanced-search-form/advanced-search-form').then((m) => ({
+      default: m.AdvancedSearchForm,
+    })),
   {
     fallback: <div>Loading form...</div>,
     errorMessage: "Couldn't load search form",
@@ -21,15 +24,21 @@ const SearchFormAdvanced = lazyComponent(
 );
 
 function FeedHandler(props) {
+  const urlQuery = useSelector((state) => state.routing.locationBeforeTransitions.query);
   const queryString = useSearchQuery();
+  const preopenAdvancedForm = !queryString || 'advanced' in urlQuery;
+
   const pageIsLoading = useSelector((state) => state.routeLoadingState);
-  const [advFormVisible, setAdvFormVisible] = useBool(!queryString);
+  const [advFormVisible, setAdvFormVisible] = useBool(preopenAdvancedForm);
   const authenticated = useSelector((state) => state.authenticated);
 
-  useEffect(
-    () => void (pageIsLoading && setAdvFormVisible(false)),
-    [pageIsLoading, setAdvFormVisible],
-  );
+  useEffect(() => {
+    if (pageIsLoading) {
+      setAdvFormVisible(false);
+    } else {
+      setAdvFormVisible(preopenAdvancedForm);
+    }
+  }, [pageIsLoading, preopenAdvancedForm, setAdvFormVisible]);
 
   if (!authenticated) {
     return (
@@ -68,7 +77,7 @@ function FeedHandler(props) {
             </p>
           </>
         )}
-        {(!queryString || advFormVisible) && <SearchFormAdvanced />}
+        {(!queryString || advFormVisible) && <AdvancedSearchForm />}
         {props.entries.length > 0 && <hr />}
       </div>
       {props.entries.length > 0 && (

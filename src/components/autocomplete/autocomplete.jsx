@@ -105,31 +105,22 @@ export function Autocomplete({ inputRef, context, anchor = defaultAnchor }) {
  * @returns {[number, number]|null}
  */
 function getQueryPosition({ value, selectionStart }, anchor) {
-  if (!selectionStart) {
-    return null;
-  }
-
   anchor.lastIndex = 0;
-
-  let found = -1;
   while (anchor.exec(value) !== null) {
-    if (anchor.lastIndex > selectionStart) {
+    const pos = anchor.lastIndex;
+    if (pos > selectionStart) {
       break;
     }
-    found = anchor.lastIndex;
+
+    const match = value.slice(pos).match(/^[a-z\d-]+/i)?.[0];
+    // Check that the caret is inside the match or is at its edge
+    if (match && match.length > selectionStart - pos - 1) {
+      return [pos, pos + match.length];
+    }
+    anchor.lastIndex = pos + 1;
   }
 
-  if (found === -1) {
-    return null;
-  }
-
-  const match = value.slice(found).match(/^[a-z\d-]+/i)?.[0];
-  // Check that the caret is inside the match or is at its edge
-  if (!match || match.length <= selectionStart - found - 1) {
-    return null;
-  }
-
-  return [found, found + match.length];
+  return null;
 }
 
 /**

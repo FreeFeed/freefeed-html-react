@@ -20,7 +20,6 @@ exports[`Post > Renders a post and doesn't blow up 1`] = `
             <img
               alt="Profile picture of author"
               height="75"
-              loading="lazy"
               width="75"
             />
           </a>

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Experimental
 
+## [1.136.0] - 2024-11-08
+### Changed
+- The advanced search form is refactored to support the new search operators.
+### Added
+- When user presses '/' or 'Ctrl+K' hotkeys, the search input form in the
+  header is focused.
+- This form now has an "Advanced search options" button that redirects to the
+  advanced search form.
+### Fixed
+- The post attachments now appear in the same order as they were added by user.
+  Previously, attachments were sorted by the upload order.
+- User's avatars in the posts are now shown without a loading="lazy" attribute.
+  If the avatar picture is not found, the default avatar is shown.
+
 ## [1.135.3] - 2024-10-22
 ### Fixed
 - Multiple fixes in style handling process:

@@ -425,7 +425,6 @@ class Post extends Component {
                   className="post-userpic-img"
                   large={props.isSinglePost}
                   user={props.createdBy}
-                  loading="lazy"
                 />
               </div>
               <div className="post-body" role="region" aria-label="Post body">

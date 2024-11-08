@@ -20,6 +20,16 @@
   img {
     width: 100%;
     height: 100%;
+    position: relative;
+
+    &::after {
+      content: '';
+      background: linear-gradient(0deg, #0000000d, #0000000d),
+        url('../../assets/images/default-userpic.svg');
+      background-size: contain;
+      position: absolute;
+      inset: 0;
+    }
   }
 }
 

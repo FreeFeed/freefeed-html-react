@@ -22,6 +22,7 @@ import {
 } from './ranked-names';
 
 export function Selector({ query, events, onSelect, context, localLinks = false }) {
+  query = query.toLowerCase();
   const dispatch = useDispatch();
   const [usernames, accountsMap, compare] = useAccountsMap({ context });
 
@@ -37,7 +38,16 @@ export function Selector({ query, events, onSelect, context, localLinks = false 
   }, [dispatch, query]);
 
   const matches = useMemo(() => {
-    const finder = new Finder(query, 5, compare);
+    const compareWithExact = (a, b) => {
+      if (a.text === query) {
+        return -1;
+      }
+      if (b.text === query) {
+        return 1;
+      }
+      return compare(a, b);
+    };
+    const finder = new Finder(query, 5, compareWithExact);
     for (const username of usernames) {
       finder.add(username);
     }

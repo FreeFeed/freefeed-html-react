@@ -12,7 +12,7 @@ let nextId = 1;
 export function useUploader({
   // Upload success (takes attachment object and upload ID)
   onSuccess = null,
-  fileIds: initialFileIds = [],
+  fileIds: givenFileIds = [],
   maxCount = Infinity,
   draftKey,
 } = {}) {
@@ -27,7 +27,10 @@ export function useUploader({
   const [, forceUpdate] = useBool();
 
   // Attachments management
-  const [fileIds, setFileIds] = useState(() => getDraft(draftKey)?.fileIds ?? initialFileIds);
+  const [initialFileIds, setInitialFileIds] = useState(
+    () => getDraft(draftKey)?.fileIds ?? givenFileIds,
+  );
+  const [fileIds, setFileIds] = useState(() => initialFileIds);
   const updatedLocally = useRef(false);
   const setFileIdsLocally = useCallback((arg) => {
     setFileIds(arg);
@@ -49,6 +52,7 @@ export function useUploader({
     }
     return subscribeToDrafts(() => {
       const fileIds = getDraft(draftKey)?.fileIds ?? initialFileIds;
+      setInitialFileIds(fileIds);
       setFileIds(fileIds);
     });
   }, [draftKey, initialFileIds]);
@@ -114,15 +118,35 @@ export function useUploader({
   });
 
   useEffect(() => {
+    // All successful uploads in the right order
+    const allFileIds = [
+      ...initialFileIds,
+      ...[...uploadIds]
+        .filter((id) => statuses[id]?.success)
+        .map((id) => allUploads[id].attachment.id),
+    ];
+
     // Detect successful uploads
     for (const id of uploadIds) {
       if (statuses[id]?.success && unfinishedFiles.has(id)) {
         unfinishedFiles.delete(id);
-        setFileIdsLocally((ids) => [...ids, allUploads[id].attachment.id]);
+        setFileIdsLocally((ids) => {
+          const newFileIds = new Set([...ids, allUploads[id].attachment.id]);
+          // Return updated ids in same order as allFileIds
+          return allFileIds.filter((id) => newFileIds.has(id));
+        });
         onSuccess?.(allUploads[id].attachment, id);
       }
     }
-  }, [allUploads, onSuccess, setFileIdsLocally, statuses, unfinishedFiles, uploadIds]);
+  }, [
+    allUploads,
+    initialFileIds,
+    onSuccess,
+    setFileIdsLocally,
+    statuses,
+    unfinishedFiles,
+    uploadIds,
+  ]);
 
   const uploadProgressProps = useMemo(
     () => ({ uploadIds, statuses, unfinishedFiles }),
