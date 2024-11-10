@@ -79,7 +79,7 @@ export function useUploader({
 
   const doUploadFile = useCallback(
     (file) => {
-      if (fileIds.length >= maxCount) {
+      if (fileIds.length + unfinishedFiles.size >= maxCount) {
         // No more files accepting
         return;
       }
@@ -123,7 +123,8 @@ export function useUploader({
       ...initialFileIds,
       ...[...uploadIds]
         .filter((id) => statuses[id]?.success)
-        .map((id) => allUploads[id].attachment.id),
+        .map((id) => allUploads[id]?.attachment.id)
+        .filter(Boolean),
     ];
 
     // Detect successful uploads
@@ -166,8 +167,8 @@ export function useUploader({
   const clearUploads = useCallback(() => {
     uploadIds.clear();
     unfinishedFiles.clear();
-    setFileIdsLocally(initialFileIds);
-  }, [initialFileIds, setFileIdsLocally, unfinishedFiles, uploadIds]);
+    setFileIdsLocally(givenFileIds);
+  }, [givenFileIds, setFileIdsLocally, unfinishedFiles, uploadIds]);
 
   return {
     isUploading,
