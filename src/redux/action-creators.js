@@ -1396,10 +1396,11 @@ export function unlockComment(id) {
   };
 }
 
-export function getMatchedUsers(query) {
+export function getMatchedUsers(query, fetchOptions) {
   return {
     type: ActionTypes.GET_MATCHED_USERS,
     apiRequest: Api.getMatchedUsers,
     payload: { query },
+    fetchOptions,
   };
 }

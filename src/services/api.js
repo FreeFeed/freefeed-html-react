@@ -841,9 +841,9 @@ export function notifyOfAllComments({ postId, enabled }) {
   );
 }
 
-export function getMatchedUsers({ query }) {
-  return fetch(
-    `${apiPrefix}/users/sparseMatches?qs=${encodeURIComponent(query)}`,
-    getRequestOptions(),
-  );
+export function getMatchedUsers({ query }, fetchOptions = {}) {
+  return fetch(`${apiPrefix}/users/sparseMatches?qs=${encodeURIComponent(query)}`, {
+    ...getRequestOptions(),
+    ...fetchOptions,
+  });
 }

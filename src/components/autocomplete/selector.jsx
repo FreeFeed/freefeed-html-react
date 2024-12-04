@@ -1,7 +1,7 @@
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { Link } from 'react-router';
 import cn from 'classnames';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useEvent } from 'react-use-event-hook';
 import { faExternalLinkAlt, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import { Finder } from '../../utils/sparse-match';
@@ -23,19 +23,8 @@ import {
 
 export function Selector({ query, events, onSelect, context, localLinks = false }) {
   query = query.toLowerCase();
-  const dispatch = useDispatch();
   const [usernames, accountsMap, compare] = useAccountsMap({ context });
-
-  // Request all users/groups when query longer than 2 chars
-  const lastQuery = useRef('');
-  useEffect(() => {
-    const lc = lastQuery.current;
-    if (query.length < 2 || (lc && query.slice(0, lc.length) === lc)) {
-      return;
-    }
-    lastQuery.current = query;
-    dispatch(getMatchedUsers(query));
-  }, [dispatch, query]);
+  useUsersRequest(query);
 
   const matches = useMemo(() => {
     const compareWithExact = (a, b) => {
@@ -195,4 +184,22 @@ function useAccountsMap({ context }) {
 
     return [[...accountsMap.keys()], accountsMap, compare];
   }, [context, post, store, lastAutocompleteQuery]);
+}
+
+function useUsersRequest(query) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (query.length < 2) {
+      return;
+    }
+
+    const abortController = new AbortController();
+    const { signal } = abortController;
+
+    const t = setTimeout(() => dispatch(getMatchedUsers(query, { signal })), 500);
+    signal.addEventListener('abort', () => clearTimeout(t));
+
+    return () => abortController.abort();
+  }, [query, dispatch]);
 }

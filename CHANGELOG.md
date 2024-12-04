@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Experimental
 
+## [1.136.2] - 2024-12-04
+### Changed
+- The autocomplete is now queries server during typing. It allows to show exact
+  matches of private users and groups.
+
 ## [1.136.0] - 2024-11-08
 ### Changed
 - The advanced search form is refactored to support the new search operators.

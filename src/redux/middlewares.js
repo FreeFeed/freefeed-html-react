@@ -174,9 +174,9 @@ export const apiMiddleware = (store) => (next) => async (action) => {
 
   //dispatch request begin action
   //clean apiRequest to not get caught by this middleware
-  store.dispatch({ ...action, type: request(action.type), apiRequest: null });
+  store.dispatch({ ...action, type: request(action.type), apiRequest: null, fetchOptions: null });
   try {
-    const apiResponse = await action.apiRequest(action.payload);
+    const apiResponse = await action.apiRequest(action.payload, action.fetchOptions);
     const obj = await apiResponse.json();
 
     if (apiResponse.status >= 200 && apiResponse.status < 300) {
