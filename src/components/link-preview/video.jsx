@@ -371,11 +371,8 @@ async function getGiphyVideoInfo(url) {
 
 async function getAparatVideoInfo(url) {
   const data = await cachedFetch(
-    `https://corsproxy.io/?${encodeURIComponent(
-      `https://www.aparat.com/oembed?url=${encodeURIComponent(url)}`,
-    )}`,
+    `https://proxy.gojet.net/api/oembed?url=${encodeURIComponent(url)}`,
   );
-
   if (data.error) {
     return { error: data.error };
   }
