@@ -1,11 +1,14 @@
+/* global CONFIG */
 import { parse as urlParse } from 'url';
 import { parse as queryParse } from 'querystring';
 
-import { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import { useState, useEffect, useMemo, memo } from 'react';
 import { faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
+import { useEvent } from 'react-use-event-hook';
 
 import { Icon } from '../fontawesome-icons';
+import { apiVersion } from '../../services/api-version';
 import cachedFetch from './helpers/cached-fetch';
 import * as aspectRatio from './helpers/size-cache';
 
@@ -30,6 +33,8 @@ export const T_GFYCAT = 'T_GFYCAT';
 export const T_GIPHY = 'T_GIPHY';
 export const T_APARAT = 'T_APARAT';
 
+const apiPrefix = `${CONFIG.api.root}/v${apiVersion}`;
+
 export function canShowURL(url) {
   return getVideoType(url) !== null;
 }
@@ -47,6 +52,8 @@ export default memo(function VideoPreview({ url }) {
     width,
     // Can we show player? (metadata is loaded and we can play video)
     canShowPlayer,
+    // Can we hide player?
+    canHidePlayer,
     // Player code
     player,
   ] = useMemo(() => {
@@ -58,6 +65,7 @@ export default memo(function VideoPreview({ url }) {
     previewStyle.paddingBottom = `${100 * r}%`;
 
     const canShowPlayer = info && (info.videoURL || info.playerURL || info.html);
+    const canHidePlayer = info && info.videoURL;
 
     let player = null;
     if (canShowPlayer) {
@@ -87,10 +95,19 @@ export default memo(function VideoPreview({ url }) {
       }
     }
 
-    return [previewStyle, width, canShowPlayer, player];
+    return [previewStyle, width, canShowPlayer, canHidePlayer, player];
   }, [info, url]);
 
-  const showPlayer = useCallback(() => canShowPlayer && setPlayerVisible(true), [canShowPlayer]);
+  const togglePlayer = useEvent(() =>
+    setPlayerVisible((visible) => {
+      if (visible && canHidePlayer) {
+        return false;
+      } else if (!visible && canShowPlayer) {
+        return true;
+      }
+      return visible;
+    }),
+  );
 
   // Load video info
   useEffect(() => void getVideoInfo(url).then(setInfo), [url]);
@@ -110,7 +127,7 @@ export default memo(function VideoPreview({ url }) {
       <div
         className="static-preview"
         style={previewStyle}
-        onClick={showPlayer}
+        onClick={togglePlayer}
         aria-label="Video preview"
       >
         {player && (playerVisible ? player : <Icon icon={faPlayCircle} className="play-icon" />)}
@@ -294,7 +311,8 @@ async function getVimeoVideoInfo(url, withoutAutoplay) {
 }
 
 async function getCoubVideoInfo(url, withoutAutoplay) {
-  const data = await cachedFetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
+  const oembedUrl = `https://coub.com/api/oembed.json?url=${encodeURIComponent(url)}`;
+  const data = await cachedFetch(`${apiPrefix}/cors-proxy?url=${encodeURIComponent(oembedUrl)}`);
 
   if (data.error) {
     return { error: data.error };
@@ -349,7 +367,8 @@ async function getGfycatVideoInfo(url) {
 }
 
 async function getGiphyVideoInfo(url) {
-  const data = await cachedFetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
+  const oembedUrl = `https://giphy.com/services/oembed?url=${encodeURIComponent(url)}`;
+  const data = await cachedFetch(`${apiPrefix}/cors-proxy?url=${encodeURIComponent(oembedUrl)}`);
 
   if (data.error) {
     return { error: data.error };
@@ -359,22 +378,21 @@ async function getGiphyVideoInfo(url) {
     return { error: data.error ? data.error : 'error loading data' };
   }
 
+  const id = getVideoId(url);
+
   return {
     byline: `${data.title} by ${data.author_name}`,
     aspectRatio: aspectRatio.set(url, data.height / data.width),
-    previewURL: data.media_url,
-    mediaURL: data.media_url,
+    previewURL: `https://i.giphy.com/media/${id}/giphy_s.gif`,
+    videoURL: `https://i.giphy.com/media/${id}/giphy.mp4`,
     width: data.width,
     height: data.height,
   };
 }
 
 async function getAparatVideoInfo(url) {
-  const data = await cachedFetch(
-    `https://corsproxy.io/?${encodeURIComponent(
-      `https://www.aparat.com/oembed?url=${encodeURIComponent(url)}`,
-    )}`,
-  );
+  const oembedUrl = `https://www.aparat.com/oembed?url=${encodeURIComponent(url)}`;
+  const data = await cachedFetch(`${apiPrefix}/cors-proxy?url=${encodeURIComponent(oembedUrl)}`);
 
   if (data.error) {
     return { error: data.error };

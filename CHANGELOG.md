@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Experimental
 
+## [1.136.3] - 2025-01-05
+### Changed
+- We now use the our own CORS proxy when showing the link previews for Coub,
+  Giphy and Aparat services.
+
 ## [1.136.2] - 2024-12-04
 ### Changed
 - The autocomplete is now queries server during typing. It allows to show exact
