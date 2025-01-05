@@ -391,22 +391,32 @@ async function getGiphyVideoInfo(url) {
 }
 
 async function getAparatVideoInfo(url) {
-  const oembedUrl = `https://www.aparat.com/oembed?url=${encodeURIComponent(url)}`;
-  const data = await cachedFetch(`${apiPrefix}/cors-proxy?url=${encodeURIComponent(oembedUrl)}`);
+  const id = getVideoId(url);
+  const apiUrl = `https://www.aparat.com/etc/api/video/videohash/${id}`;
+  const data = await cachedFetch(`${apiPrefix}/cors-proxy?url=${encodeURIComponent(apiUrl)}`);
 
   if (data.error) {
     return { error: data.error };
   }
 
-  if (!('title' in data)) {
+  if (!('video' in data)) {
     return { error: data.error ? data.error : 'error loading data' };
   }
 
+  const { video } = data;
+
+  let ratio = 9 / 16;
+  try {
+    const img = await loadImage(video.big_poster);
+    ratio = img.height / img.width;
+  } catch {
+    // ignore
+  }
   return {
-    byline: `${data.title} by ${data.author_name}`,
-    aspectRatio: aspectRatio.set(url, data.height / data.width),
-    previewURL: data.thumbnail_url,
-    playerURL: `https://www.aparat.com/video/video/embed/videohash/${getVideoId(url)}/vt/frame`,
+    byline: `${video.title} by ${video.sender_name}`,
+    aspectRatio: aspectRatio.set(url, ratio),
+    previewURL: video.big_poster,
+    playerURL: video.frame,
   };
 }
 
