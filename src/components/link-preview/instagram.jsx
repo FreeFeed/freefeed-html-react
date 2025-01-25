@@ -29,8 +29,10 @@ export default function InstagramPreview({ url }) {
   useEffect(() => {
     startEventListening();
     // set default frame height
-    const r = aspectRatio.get(url, 470 / 400);
-    iframeRef.current.style.height = `${iframeRef.current.offsetWidth * r}px`;
+    if (iframeRef.current) {
+      const r = aspectRatio.get(url, 470 / 400);
+      iframeRef.current.style.height = `${iframeRef.current.offsetWidth * r}px`;
+    }
   }, [url]);
 
   if (isPrivate) {
