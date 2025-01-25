@@ -780,6 +780,10 @@ export function getAttachmentsStats() {
   return fetch(`${apiPrefix}/attachments/my/stats`, getRequestOptions());
 }
 
+export function getAttachmentInfo({ attId }) {
+  return fetch(`${apiPrefix}/attachments/${attId}`, getRequestOptions());
+}
+
 export function sanitizeMedia() {
   return fetch(`${apiPrefix}/attachments/my/sanitize`, postRequestOptions());
 }

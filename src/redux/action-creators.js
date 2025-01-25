@@ -1262,6 +1262,15 @@ export function getAttachmentsStats() {
   };
 }
 
+export function getAttachmentInfo(attId) {
+  return {
+    type: ActionTypes.GET_ATTACHMENT_INFO,
+    apiRequest: Api.getAttachmentInfo,
+    nonAuthRequest: true,
+    payload: { attId },
+  };
+}
+
 export function sanitizeMedia() {
   return {
     type: ActionTypes.SANITIZE_MEDIA,
