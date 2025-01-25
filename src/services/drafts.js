@@ -207,7 +207,6 @@ export function initializeDrafts(store) {
 
   // Put found files to the redux store
   for (const file of allFiles.values()) {
-    store.dispatch(setAttachment(file));
     store.dispatch(getAttachmentInfo(file.id));
   }
 

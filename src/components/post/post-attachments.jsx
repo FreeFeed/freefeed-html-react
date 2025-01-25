@@ -41,7 +41,7 @@ const looksLikeAVideoFile = (attachment) => {
 
 export default function PostAttachments(props) {
   const attachments = useSelector(
-    (state) => (props.attachmentIds || []).map((id) => state.attachments[id]),
+    (state) => (props.attachmentIds || []).map((id) => state.attachments[id]).filter(Boolean),
     shallowEqual,
   );
 
