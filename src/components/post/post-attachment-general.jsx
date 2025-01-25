@@ -10,10 +10,21 @@ class GeneralAttachment extends PureComponent {
     this.props.removeAttachment(this.props.id);
   };
 
+  handleClick = (e) => {
+    if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
+      return;
+    }
+    if (this.props.inProgress) {
+      e.preventDefault();
+      alert('This file is still being processed');
+    }
+  };
+
   render() {
     const { props } = this;
+    const { inProgress = false } = props;
     const formattedFileSize = formatFileSize(props.fileSize);
-    const nameAndSize = `${props.fileName} (${formattedFileSize})`;
+    const nameAndSize = `${props.fileName} (${inProgress ? 'processing...' : formattedFileSize})`;
 
     return (
       <div className="attachment" role="figure" aria-label={`Attachment ${nameAndSize}`}>
