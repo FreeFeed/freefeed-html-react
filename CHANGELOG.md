@@ -194,6 +194,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   User can disable drafts saving on the Settings / Privacy page. In this case,
   drafts will still work, but will not be saved to persistent storage and will
   be lost on tab close/reload.
+### Changed
+- RTL texts are now right-aligned in the post bodies and in the user
+  descriptions.
 
 ## [1.127.3] - 2024-02-14
 ### Fixed

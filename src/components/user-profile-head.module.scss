@@ -102,6 +102,10 @@ $actions-padding: 0.75em;
   &:empty {
     display: none;
   }
+
+  & :global(.Linkify) {
+    display: block;
+  }
 }
 
 .stats {
