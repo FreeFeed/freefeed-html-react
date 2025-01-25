@@ -22,6 +22,12 @@ const supportedVideoTypes = Object.entries(videoTypes)
 video = null;
 
 const looksLikeAVideoFile = (attachment) => {
+  if (attachment.inProgress) {
+    return false;
+  }
+  if (attachment.url.endsWith('.mp4')) {
+    return true;
+  }
   const lowercaseFileName = attachment.fileName.toLowerCase();
 
   for (const extension of supportedVideoTypes) {
