@@ -4,8 +4,12 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import { formatFileSize } from '../../utils';
 import { Icon } from '../fontawesome-icons';
+import { attachmentPreviewUrl } from '../../services/api';
 
 const NSFW_PREVIEW_AREA = 20;
+
+const previewMaxWidth = 525;
+const previewMaxHeight = 175;
 
 class PostAttachmentImage extends PureComponent {
   canvasRef = createRef(null);
@@ -19,57 +23,39 @@ class PostAttachmentImage extends PureComponent {
     if (!nsfwCanvas) {
       return;
     }
+    const { width, height } = previewSizes(this.props);
     const ctx = nsfwCanvas.getContext('2d');
     ctx.fillStyle = '#cccccc';
     ctx.fillRect(0, 0, nsfwCanvas.width, nsfwCanvas.height);
     const img = new Image();
     img.onload = () =>
       nsfwCanvas.isConnected && ctx.drawImage(img, 0, 0, nsfwCanvas.width, nsfwCanvas.height);
-    img.src = this.props.imageSizes.t?.url ?? this.props.thumbnailUrl;
+    img.src = attachmentPreviewUrl(this.props.id, 'image', width, height);
   }
 
   render() {
     const { props } = this;
 
     const formattedFileSize = formatFileSize(props.fileSize);
-    const formattedImageSize = props.imageSizes.o
-      ? `, ${props.imageSizes.o.w}×${props.imageSizes.o.h}px`
-      : '';
+    const formattedImageSize = `, ${props.width}×${props.height}px`;
     const nameAndSize = `${props.fileName} (${formattedFileSize}${formattedImageSize})`;
     const alt = `Image attachment ${props.fileName}`;
 
-    let srcSet;
-    if (props.imageSizes.t2 && props.imageSizes.t2.url) {
-      srcSet = `${props.imageSizes.t2.url} 2x`;
-    } else if (
-      props.imageSizes.o &&
-      props.imageSizes.t &&
-      props.imageSizes.o.w <= props.imageSizes.t.w * 2
-    ) {
-      srcSet = `${props.imageSizes.o.url || props.url} 2x`;
-    }
+    const { width, height } = previewSizes(this.props);
 
     const imageAttributes = {
-      src: (props.imageSizes.t && props.imageSizes.t.url) || props.thumbnailUrl,
-      srcSet,
+      src: attachmentPreviewUrl(props.id, 'image', width, height),
+      srcSet: `${attachmentPreviewUrl(props.id, 'image', width * 2, height * 2)} 2x`,
       alt,
       id: props.pictureId,
       loading: 'lazy',
-      width: props.imageSizes.t
-        ? props.imageSizes.t.w
-        : props.imageSizes.o
-          ? props.imageSizes.o.w
-          : undefined,
-      height: props.imageSizes.t
-        ? props.imageSizes.t.h
-        : props.imageSizes.o
-          ? props.imageSizes.o.h
-          : undefined,
+      width,
+      height,
     };
 
-    const area = imageAttributes.width * imageAttributes.height;
-    const canvasWidth = Math.round(imageAttributes.width * Math.sqrt(NSFW_PREVIEW_AREA / area));
-    const canvasHeight = Math.round(imageAttributes.height * Math.sqrt(NSFW_PREVIEW_AREA / area));
+    const area = width * height;
+    const canvasWidth = Math.round(width * Math.sqrt(NSFW_PREVIEW_AREA / area));
+    const canvasHeight = Math.round(height * Math.sqrt(NSFW_PREVIEW_AREA / area));
 
     return (
       <div
@@ -84,21 +70,15 @@ class PostAttachmentImage extends PureComponent {
           target="_blank"
           className="image-attachment-link"
         >
-          {props.thumbnailUrl ? (
-            <>
-              {props.isNSFW && (
-                <canvas
-                  ref={this.canvasRef}
-                  className="image-attachment-nsfw-canvas"
-                  width={canvasWidth}
-                  height={canvasHeight}
-                />
-              )}
-              <img className="image-attachment-img" {...imageAttributes} />
-            </>
-          ) : (
-            props.id
+          {props.isNSFW && (
+            <canvas
+              ref={this.canvasRef}
+              className="image-attachment-nsfw-canvas"
+              width={canvasWidth}
+              height={canvasHeight}
+            />
           )}
+          <img className="image-attachment-img" {...imageAttributes} />
         </a>
 
         {props.isEditing && (
@@ -115,3 +95,23 @@ class PostAttachmentImage extends PureComponent {
 }
 
 export default PostAttachmentImage;
+
+export function previewSizes(att) {
+  return fitIntoBox(
+    att.previewWidth ?? att.width,
+    att.previewHeight ?? att.height,
+    previewMaxWidth,
+    previewMaxHeight,
+  );
+}
+
+function fitIntoBox(width, height, boxWidth, boxHeight) {
+  const wRatio = width / boxWidth;
+  const hRatio = height / boxHeight;
+
+  if (wRatio > hRatio) {
+    return { width: boxWidth, height: Math.round(height / wRatio) };
+  }
+
+  return { width: Math.round(width / hRatio), height: boxHeight };
+}

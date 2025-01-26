@@ -6,7 +6,8 @@ import { faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from '../fontawesome-icons';
 import { lazyComponent } from '../lazy-component';
 import { openLightbox } from '../../services/lightbox';
-import ImageAttachment from './post-attachment-image';
+import { attachmentPreviewUrl } from '../../services/api';
+import ImageAttachment, { previewSizes } from './post-attachment-image';
 
 const bordersSize = 4;
 const spaceSize = 8;
@@ -38,7 +39,7 @@ export default class ImageAttachmentsContainer extends Component {
 
   getItemWidths() {
     return this.props.attachments
-      .map(({ imageSizes: { t, o } }) => (t ? t.w : o ? o.w : 0))
+      .map((att) => previewSizes(att).width)
       .map((w) => w + bordersSize + spaceSize);
   }
 
@@ -72,11 +73,10 @@ export default class ImageAttachmentsContainer extends Component {
 
   getPswpItems() {
     return this.props.attachments.map((a) => ({
-      src: a.url,
-      width: a.imageSizes?.o?.w ?? 1,
-      height: a.imageSizes?.o?.h ?? 1,
+      src: attachmentPreviewUrl(a.id, 'image'),
+      width: a.previewWidth ?? a.width,
+      height: a.previewHeight ?? a.height,
       pid: this.getPictureId(a),
-      autoSize: !a.imageSizes?.o?.w,
     }));
   }
 

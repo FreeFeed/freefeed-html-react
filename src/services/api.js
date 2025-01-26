@@ -784,6 +784,15 @@ export function getAttachmentInfo({ attId }) {
   return fetch(`${apiPrefix}/attachments/${attId}`, getRequestOptions());
 }
 
+export function attachmentPreviewUrl(attId, type, width = null, height = null) {
+  const url = new URL(`${apiPrefix}/attachments/${attId}/${type}?redirect`);
+  if (width && height) {
+    url.searchParams.set('width', width);
+    url.searchParams.set('height', height);
+  }
+  return url.toString();
+}
+
 export function sanitizeMedia() {
   return fetch(`${apiPrefix}/attachments/my/sanitize`, postRequestOptions());
 }
