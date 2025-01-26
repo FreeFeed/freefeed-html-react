@@ -4,7 +4,8 @@ import ErrorBoundary from '../error-boundary';
 import ImageAttachmentsContainer from './post-attachment-image-container';
 import AudioAttachment from './post-attachment-audio';
 import GeneralAttachment from './post-attachment-general';
-import VideoAttachment from './post-attachment-video';
+import LikeAVideoAttachment from './post-attachment-like-a-video';
+import { VideoAttachment } from './post-attachment-video';
 
 const videoTypes = {
   mov: 'video/quicktime',
@@ -22,11 +23,8 @@ const supportedVideoTypes = Object.entries(videoTypes)
 video = null;
 
 const looksLikeAVideoFile = (attachment) => {
-  if (attachment.inProgress) {
+  if (attachment.meta?.inProgress) {
     return false;
-  }
-  if (attachment.url.endsWith('.mp4')) {
-    return true;
   }
   const lowercaseFileName = attachment.fileName.toLowerCase();
 
@@ -48,6 +46,7 @@ export default function PostAttachments(props) {
   const imageAttachments = [];
   const audioAttachments = [];
   const videoAttachments = [];
+  const likeAVideoAttachments = [];
   const generalAttachments = [];
 
   attachments.forEach((attachment) => {
@@ -55,8 +54,10 @@ export default function PostAttachments(props) {
       imageAttachments.push(attachment);
     } else if (attachment.mediaType === 'audio') {
       audioAttachments.push(attachment);
-    } else if (attachment.mediaType === 'general' && looksLikeAVideoFile(attachment)) {
+    } else if (attachment.mediaType === 'video' && !attachment.meta?.inProgress) {
       videoAttachments.push(attachment);
+    } else if (attachment.mediaType === 'general' && looksLikeAVideoFile(attachment)) {
+      likeAVideoAttachments.push(attachment);
     } else {
       generalAttachments.push(attachment);
     }
@@ -88,6 +89,21 @@ export default function PostAttachments(props) {
   const audioAttachmentsContainer =
     audioAttachments.length > 0 ? (
       <div className="audio-attachments">{audioAttachmentsNodes}</div>
+    ) : (
+      false
+    );
+
+  const likeAVideoAttachmentsNodes = likeAVideoAttachments.map((attachment) => (
+    <LikeAVideoAttachment
+      key={attachment.id}
+      isEditing={props.isEditing}
+      removeAttachment={props.removeAttachment}
+      {...attachment}
+    />
+  ));
+  const likeVideoAttachmentsContainer =
+    likeAVideoAttachments.length > 0 ? (
+      <div className="video-attachments">{likeAVideoAttachmentsNodes}</div>
     ) : (
       false
     );
@@ -128,6 +144,7 @@ export default function PostAttachments(props) {
         {imageAttachmentsContainer}
         {audioAttachmentsContainer}
         {videoAttachmentsContainer}
+        {likeVideoAttachmentsContainer}
         {generalAttachmentsContainer}
       </ErrorBoundary>
     </div>

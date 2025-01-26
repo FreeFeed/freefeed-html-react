@@ -7,7 +7,8 @@ import { Icon } from '../fontawesome-icons';
 import { lazyComponent } from '../lazy-component';
 import { openLightbox } from '../../services/lightbox';
 import { attachmentPreviewUrl } from '../../services/api';
-import ImageAttachment, { previewSizes } from './post-attachment-image';
+import ImageAttachment from './post-attachment-image';
+import { thumbnailSize } from './post-attachment-geometry';
 
 const bordersSize = 4;
 const spaceSize = 8;
@@ -39,7 +40,7 @@ export default class ImageAttachmentsContainer extends Component {
 
   getItemWidths() {
     return this.props.attachments
-      .map((att) => previewSizes(att).width)
+      .map((att) => thumbnailSize(att).width)
       .map((w) => w + bordersSize + spaceSize);
   }
 

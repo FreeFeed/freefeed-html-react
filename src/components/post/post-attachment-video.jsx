@@ -1,93 +1,69 @@
-import { useEffect, useRef, useState } from 'react';
-import { faFileVideo, faPlayCircle } from '@fortawesome/free-regular-svg-icons';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-
 import { useEvent } from 'react-use-event-hook';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { useEffect, useRef } from 'react';
+import { attachmentPreviewUrl } from '../../services/api';
 import { formatFileSize } from '../../utils';
-import { ButtonLink } from '../button-link';
 import { Icon } from '../fontawesome-icons';
+import { useMediaQuery } from '../hooks/media-query';
+import { videoSize } from './post-attachment-geometry';
 
-export default function VideoAttachment({
-  id,
-  url,
-  fileName,
-  fileSize,
-  removeAttachment,
-  isEditing,
-}) {
-  const [isOpen, setIsOpen] = useState(false);
+export function VideoAttachment({ isEditing, removeAttachment, ...att }) {
+  const handleClickOnRemoveAttachment = useEvent(() => removeAttachment(att.id));
+  const title = `Video attachment ${att.fileName} (${formatFileSize(att.fileSize)})`;
+  const { width, height } = videoSize(att);
+  const hiDpi = useMediaQuery('(min-resolution: 1.5x)') ? 2 : 1;
 
-  const handleClickOnRemoveAttachment = useEvent(() => removeAttachment(id));
-  const toggleOpen = useEvent(() => setIsOpen(true));
+  const videoUrl = attachmentPreviewUrl(att.id, 'video', hiDpi * width, hiDpi * height);
 
-  const formattedFileSize = formatFileSize(fileSize);
-  const title = `${fileName} (${formattedFileSize})`;
+  const maxVideoUrl = attachmentPreviewUrl(att.id, 'video');
 
   const videoRef = useRef(null);
 
-  // Prevent video from playing infinitely (we has this situation once and don't
-  // want it to happen again)
   useEffect(() => {
-    if (!isOpen || !videoRef.current) {
+    const el = videoRef.current;
+    if (!el) {
       return;
     }
-    const videoEl = videoRef.current;
-
-    // By default, the video playback should be paused after 5 minutes
-    let maxPlayTime = 300 * 1000;
-    let playTimer = 0;
-    const onPlay = () => {
-      clearTimeout(playTimer);
-      playTimer = setTimeout(() => videoEl.pause(), maxPlayTime);
+    const h = () => {
+      const { paused, currentTime } = el;
+      if (document.fullscreenElement) {
+        el.src = maxVideoUrl;
+      } else {
+        el.src = videoUrl;
+      }
+      el.load();
+      el.currentTime = currentTime;
+      if (!paused) {
+        el.play();
+      }
     };
-    const onPause = () => clearTimeout(playTimer);
-    const onDurationChange = () => {
-      // Video in playback mode should not be longer than 10 times of the video duration
-      maxPlayTime = videoEl.duration * 10 * 1000;
-    };
-    const abortController = new AbortController();
-    const { signal } = abortController;
 
-    videoEl.addEventListener('durationchange', onDurationChange, { once: true, signal });
-    videoEl.addEventListener('play', onPlay, { signal });
-    videoEl.addEventListener('pause', onPause, { signal });
-    signal.addEventListener('abort', onPause);
-    return () => abortController.abort();
-  }, [isOpen]);
+    el.addEventListener('fullscreenchange', h);
+    return () => el.removeEventListener('fullscreenchange', h);
+  }, [maxVideoUrl, videoUrl]);
 
   return (
-    <div className="attachment" role="figure" aria-label={`Video attachment ${title}`}>
-      {isOpen ? (
-        <div>
-          <video title={title} autoPlay controls ref={videoRef}>
-            <source src={url} />
-            Your browser does not support HTML5 video tag.
-          </video>
-        </div>
-      ) : (
-        <ButtonLink
-          onClick={toggleOpen}
-          className="video-attachment-click-to-play"
-          title="Click to play video"
-        >
-          <Icon icon={faPlayCircle} />
-        </ButtonLink>
+    <div className="attachment attachment--video" role="figure" aria-label={title}>
+      <video
+        ref={videoRef}
+        src={videoUrl}
+        poster={attachmentPreviewUrl(att.id, 'image', hiDpi * width, hiDpi * height)}
+        width={width}
+        height={height}
+        controls
+        playsInline
+        muted={att.meta?.muted}
+        loop={att.meta?.animatedImage}
+        loading="lazy"
+      />
+      {isEditing && (
+        <Icon
+          icon={faTimes}
+          className="remove-attachment"
+          title="Remove video file"
+          onClick={handleClickOnRemoveAttachment}
+        />
       )}
-      <div>
-        <a href={url} title={title} target="_blank">
-          <Icon icon={faFileVideo} className="attachment-icon" />
-          <span>{title}</span>
-        </a>
-
-        {isEditing && (
-          <Icon
-            icon={faTimes}
-            className="remove-attachment"
-            title="Remove video file"
-            onClick={handleClickOnRemoveAttachment}
-          />
-        )}
-      </div>
     </div>
   );
 }

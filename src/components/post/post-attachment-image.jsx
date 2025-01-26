@@ -5,11 +5,9 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { formatFileSize } from '../../utils';
 import { Icon } from '../fontawesome-icons';
 import { attachmentPreviewUrl } from '../../services/api';
+import { thumbnailSize } from './post-attachment-geometry';
 
 const NSFW_PREVIEW_AREA = 20;
-
-const previewMaxWidth = 525;
-const previewMaxHeight = 175;
 
 class PostAttachmentImage extends PureComponent {
   canvasRef = createRef(null);
@@ -23,7 +21,7 @@ class PostAttachmentImage extends PureComponent {
     if (!nsfwCanvas) {
       return;
     }
-    const { width, height } = previewSizes(this.props);
+    const { width, height } = thumbnailSize(this.props);
     const ctx = nsfwCanvas.getContext('2d');
     ctx.fillStyle = '#cccccc';
     ctx.fillRect(0, 0, nsfwCanvas.width, nsfwCanvas.height);
@@ -41,7 +39,7 @@ class PostAttachmentImage extends PureComponent {
     const nameAndSize = `${props.fileName} (${formattedFileSize}${formattedImageSize})`;
     const alt = `Image attachment ${props.fileName}`;
 
-    const { width, height } = previewSizes(this.props);
+    const { width, height } = thumbnailSize(this.props);
 
     const imageAttributes = {
       src: attachmentPreviewUrl(props.id, 'image', width, height),
@@ -95,23 +93,3 @@ class PostAttachmentImage extends PureComponent {
 }
 
 export default PostAttachmentImage;
-
-export function previewSizes(att) {
-  return fitIntoBox(
-    att.previewWidth ?? att.width,
-    att.previewHeight ?? att.height,
-    previewMaxWidth,
-    previewMaxHeight,
-  );
-}
-
-function fitIntoBox(width, height, boxWidth, boxHeight) {
-  const wRatio = width / boxWidth;
-  const hRatio = height / boxHeight;
-
-  if (wRatio > hRatio) {
-    return { width: boxWidth, height: Math.round(height / wRatio) };
-  }
-
-  return { width: Math.round(width / hRatio), height: boxHeight };
-}
