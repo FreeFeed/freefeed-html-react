@@ -14,7 +14,7 @@ class GeneralAttachment extends PureComponent {
     if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
       return;
     }
-    if (this.props.inProgress) {
+    if (this.props.meta?.inProgress) {
       e.preventDefault();
       alert('This file is still being processed');
     }
@@ -22,7 +22,7 @@ class GeneralAttachment extends PureComponent {
 
   render() {
     const { props } = this;
-    const { inProgress = false } = props;
+    const { inProgress = false } = props.meta ?? {};
     const formattedFileSize = formatFileSize(props.fileSize);
     const nameAndSize = `${props.fileName} (${inProgress ? 'processing...' : formattedFileSize})`;
 

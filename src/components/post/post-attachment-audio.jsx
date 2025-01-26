@@ -4,6 +4,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import { formatFileSize } from '../../utils';
 import { Icon } from '../fontawesome-icons';
+import { attachmentPreviewUrl } from '../../services/api';
 
 class AudioAttachment extends PureComponent {
   handleClickOnRemoveAttachment = () => {
@@ -26,7 +27,12 @@ class AudioAttachment extends PureComponent {
     return (
       <div className="attachment" role="figure" aria-label={`Audio attachment ${artistAndTitle}`}>
         <div>
-          <audio src={props.url} title={artistAndTitle} preload="none" controls />
+          <audio
+            src={attachmentPreviewUrl(props.id, 'audio')}
+            title={artistAndTitle}
+            preload="none"
+            controls
+          />
         </div>
         <div>
           <a href={props.url} title={artistAndTitle} target="_blank">
