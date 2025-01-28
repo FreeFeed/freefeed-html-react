@@ -40,11 +40,7 @@ export function mergeByIds(state, list, { insert = true, update = false } = {}) 
 
   const newState = { ...state };
   for (const it of list) {
-    if (!newState[it.id] && insert) {
-      newState[it.id] = it;
-    } else if (newState[it.id] && update) {
-      newState[it.id] = { ...newState[it.id], ...it };
-    }
+    newState[it.id] = it;
   }
   return newState;
 }

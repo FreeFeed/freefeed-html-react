@@ -683,11 +683,7 @@ export function attachments(state = {}, action) {
     case response(ActionTypes.GET_ATTACHMENT_INFO):
     case ActionTypes.SET_ATTACHMENT:
     case ActionTypes.ADD_ATTACHMENT_RESPONSE: {
-      const attObj = action.payload.attachments;
-      return {
-        ...state,
-        [attObj.id]: attObj,
-      };
+      return mergeByIds(state, [action.payload.attachments], { update: true });
     }
   }
   return state;
