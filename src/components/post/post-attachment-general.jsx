@@ -4,6 +4,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import { formatFileSize } from '../../utils';
 import { Icon } from '../fontawesome-icons';
+import { attachmentPreviewUrl } from '../../services/api';
 
 class GeneralAttachment extends PureComponent {
   handleClickOnRemoveAttachment = () => {
@@ -28,7 +29,12 @@ class GeneralAttachment extends PureComponent {
 
     return (
       <div className="attachment" role="figure" aria-label={`Attachment ${nameAndSize}`}>
-        <a href={props.url} title={nameAndSize} target="_blank">
+        <a
+          href={attachmentPreviewUrl(props.id, 'original')}
+          onClick={this.handleClick}
+          title={nameAndSize}
+          target="_blank"
+        >
           <Icon icon={faFile} className="attachment-icon" />
           <span className="attachment-title">{nameAndSize}</span>
         </a>
