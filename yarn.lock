@@ -8154,6 +8154,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"photoswipe-video-plugin@npm:~1.0.2":
+  version: 1.0.2
+  resolution: "photoswipe-video-plugin@npm:1.0.2"
+  checksum: 10c0/b48072271b89d0054d1db2edb65ee1cca96c2483afac48887a5c289c865eea7fb18d90052d67c49a90149e8ef9067155e377f6eb8e13ec81c2c81ed4ba8e734b
+  languageName: node
+  linkType: hard
+
 "photoswipe@npm:~5.4.4":
   version: 5.4.4
   resolution: "photoswipe@npm:5.4.4"
@@ -8798,6 +8805,7 @@ __metadata:
     node-html-parser: "npm:~6.1.13"
     npm-run-all: "npm:~4.1.5"
     photoswipe: "npm:~5.4.4"
+    photoswipe-video-plugin: "npm:~1.0.2"
     porter-stemmer: "npm:~0.9.1"
     prettier: "npm:~3.3.3"
     prop-types: "npm:~15.8.1"

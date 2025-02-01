@@ -1,0 +1,148 @@
+.attachments a {
+  color: #000088;
+  text-decoration: none;
+
+  &:hover .original-link__text {
+    text-decoration: underline;
+  }
+}
+
+.container {
+  margin-bottom: 1em;
+}
+
+.attachment {
+  margin-bottom: 0.5em;
+}
+
+.attachment--audio {
+  margin-bottom: 1em;
+}
+
+.container--visual {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--gap, 5px);
+}
+
+.visual__filler {
+  flex: 1;
+}
+
+.visual__link {
+  position: relative;
+  display: inline-flex;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 1);
+  }
+}
+
+.container--sortable .visual__link {
+  cursor: move;
+}
+
+.visual__overlay {
+  position: absolute;
+  color: #fff;
+  background-color: #333;
+  outline: 1px solid rgba(255, 255, 255, 0.2);
+  opacity: 0.75;
+  font-size: 0.75em;
+  padding: 0 0.5em;
+  border-radius: 0.35em;
+  font-weight: bold;
+  display: flex;
+  gap: 0.35em;
+  align-items: center;
+  z-index: 1;
+}
+
+.visual__overlay--button {
+  border: none;
+  opacity: 1;
+  cursor: pointer;
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+
+  &:hover {
+    outline: 3px solid rgba(255, 255, 255, 1);
+  }
+}
+
+.visual__overlay--info {
+  bottom: 0.35em;
+  right: 0.35em;
+  pointer-events: none;
+}
+
+.visual__overlay--info :global(.fa-icon) {
+  font-size: 0.85em;
+}
+
+.visual__overlay--remove {
+  top: 0.3em;
+  right: 0.3em;
+  padding: 0.2em;
+  font-size: 1.2em;
+}
+
+.audio__player {
+  width: 100%;
+}
+
+.original-link__container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.original-link__icon {
+  opacity: 0.75;
+  flex: none;
+  color: initial;
+  margin-top: 0.2em;
+}
+
+.original-link__text {
+  flex: 1;
+}
+
+.original-link__size {
+  color: initial;
+  opacity: 0.5;
+}
+
+.original-link__remove {
+  flex: none;
+  color: #fff;
+  background-color: #333;
+  border: none;
+  display: flex;
+  cursor: pointer;
+  padding: 0.2em;
+  font-size: 1.2em;
+  border-radius: 0.35em;
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+}
+
+.nsfw-canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  filter: contrast(1.2);
+  background-color: #ccc;
+}
+
+.nsfw-canvas__label {
+  color: #ccc;
+  font-weight: bold;
+  font-size: 1.25em;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

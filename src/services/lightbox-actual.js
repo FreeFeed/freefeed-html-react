@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable unicorn/prefer-query-selector */
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
+import PhotoSwipeVideoPlugin from 'photoswipe-video-plugin';
 import Mousetrap from 'mousetrap';
 import pswpModule from 'photoswipe';
 import 'photoswipe/photoswipe.css';
@@ -29,6 +30,13 @@ const fullscreenIconsHtml = `<svg aria-hidden="true" class="pswp__icn" viewBox="
 <path d="M11.213 8v3.213H8v2.834h6.047V8zm6.74 0v6.047H24v-2.834h-3.213V8zM8 17.953v2.834h3.213V24h2.834v-6.047h-2.834zm9.953 0V24h2.834v-3.213H24v-2.834h-3.213z" id="pswp__icn-fullscreen-close"/>
 </svg>`;
 
+const downloadIconHtml = {
+  isCustomSVG: true,
+  inner:
+    '<path d="M20.5 14.3 17.1 18V10h-2.2v7.9l-3.4-3.6L10 16l6 6.1 6-6.1ZM23 23H9v2h14Z" id="pswp__icn-download"/>',
+  outlineID: 'pswp__icn-download',
+};
+
 function initLightbox() {
   const lightbox = new PhotoSwipeLightbox({
     clickToCloseNonZoomable: false,
@@ -45,6 +53,8 @@ function initLightbox() {
     maxZoomLevel: 2,
     pswpModule,
   });
+
+  new PhotoSwipeVideoPlugin(lightbox, {});
 
   // Add fullscreen button
   lightbox.on('uiRegister', () => {
@@ -63,6 +73,23 @@ function initLightbox() {
         } else {
           fsApi.request(lightbox.pswp.element);
         }
+      },
+    });
+
+    lightbox.pswp.ui.registerElement({
+      name: 'download-button',
+      order: 10,
+      isButton: true,
+      tagName: 'a',
+      html: downloadIconHtml,
+      onInit: (el, pswp) => {
+        el.setAttribute('download', ''); // Does not work for cross-origin links:(
+        el.setAttribute('target', '_blank');
+        el.setAttribute('rel', 'noopener');
+
+        pswp.on('change', () => {
+          el.href = pswp.currSlide.data.originalSrc;
+        });
       },
     });
 

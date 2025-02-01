@@ -38,13 +38,13 @@ import { UnhideOptions, HideLink } from './post-hides-ui';
 import PostMoreLink from './post-more-link';
 import PostLikeLink from './post-like-link';
 import PostHeader from './post-header';
-import PostAttachments from './post-attachments';
 import PostComments from './post-comments';
 import PostLikes from './post-likes';
 import { PostContext } from './post-context';
 import { PostEditForm } from './post-edit-form';
 import { PostProvider } from './post-comment-provider';
 import { DraftIndicator } from './draft-indicator';
+import { Attachments } from './attachments/attachments';
 
 class Post extends Component {
   selectFeeds;
@@ -457,14 +457,11 @@ class Post extends Component {
               <>
                 {this.props.attachments.length > 0 && (
                   <div className="post-body" role="region" aria-label="Post attachments">
-                    <PostAttachments
+                    <Attachments
                       postId={props.id}
                       attachmentIds={this.props.attachments}
-                      isEditing={false}
                       isNSFW={props.isNSFW}
                       isSinglePost={props.isSinglePost}
-                      removeAttachment={this.removeAttachment}
-                      reorderImageAttachments={this.reorderImageAttachments}
                     />
                     {!this.props.noImageAttachments && props.isNSFW && (
                       <div className="nsfw-bar">
