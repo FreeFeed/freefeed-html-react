@@ -195,7 +195,7 @@ function initLightbox() {
   lightbox.on('contentLoad', ({ content }) => {
     const { data, element } = content;
     if (data.type === 'video') {
-      if (data.meta.animatedImage) {
+      if (data.meta.animatedImage || (data.meta.silent && data.duration <= 5)) {
         element.muted = true;
         element.loop = true;
         element.controls = false;

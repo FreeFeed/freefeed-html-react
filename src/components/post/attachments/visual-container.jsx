@@ -47,6 +47,7 @@ export function VisualContainer({
               videoSrc: attachmentPreviewUrl(a.id, 'video'),
               msrc: attachmentPreviewUrl(a.id, 'image'),
               meta: a.meta ?? {},
+              duration: a.duration ?? 0,
             }),
         originalSrc: attachmentPreviewUrl(a.id, 'original'),
         width: a.previewWidth ?? a.width,
