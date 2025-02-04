@@ -191,6 +191,20 @@ function initLightbox() {
     setTimeout(() => window.removeEventListener('scroll', h, { once: true }), 500);
   });
 
+  // Show animated images as a looped video without controls
+  lightbox.on('contentLoad', ({ content }) => {
+    const { data, element } = content;
+    if (data.type === 'video') {
+      if (data.meta.animatedImage) {
+        element.muted = true;
+        element.loop = true;
+        element.controls = false;
+      } else if (data.meta.silent) {
+        element.muted = true;
+      }
+    }
+  });
+
   // Init
   lightbox.init();
   return lightbox;
