@@ -68,12 +68,23 @@ export function VisualAttachment({
       target="_blank"
       data-pid={pictureId}
     >
-      {att.mediaType === 'image' ? (
-        <img id={pictureId} src={imageSrc} alt={alt} loading="lazy" width={width} height={height} />
-      ) : (
+      {/**
+       * This image is used for the proper lightbox opening animation,
+       * even if the attachment has 'video' type.
+       */}
+      <img
+        id={pictureId}
+        src={imageSrc}
+        alt={alt}
+        loading="lazy"
+        width={width}
+        height={height}
+        aria-hidden={att.mediaType === 'video'}
+      />
+      {att.mediaType === 'video' && (
         <>
           <video
-            id={pictureId}
+            className={style['visual__video']}
             src={videoSrc}
             poster={imageSrc}
             alt={alt}
