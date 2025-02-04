@@ -15,9 +15,7 @@ export function NsfwCanvas({ aspectRatio, src }) {
     const img = new Image();
     img.onload = () => canvas.isConnected && ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     img.src = src;
-    // Run only once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [src]);
 
   return (
     <>

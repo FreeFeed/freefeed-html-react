@@ -7,7 +7,7 @@ import { lazyComponent } from '../../lazy-component';
 import style from './attachments.module.scss';
 import { VisualAttachment } from './visual';
 import { useWidthOf } from './use-width-of';
-import { fitIntoBox, getGallerySizes } from './geometry';
+import { fitIntoBox, getGallerySizes, legacyThumbnailSize } from './geometry';
 
 const gap = 8; // px
 const thumbArea = 210 ** 2; // px^2
@@ -28,13 +28,13 @@ export function VisualContainer({
   const containerWidth = useWidthOf(containerRef);
 
   const ratios = attachments.map((a) => a.width / a.height);
-  let sizes = getGallerySizes(ratios, containerWidth - 5, thumbArea, gap).flat();
+  let sizeRows = getGallerySizes(ratios, containerWidth - 1, thumbArea, gap);
 
   const singleImage = attachments.length === 1;
   const withSortable = !!removeAttachment && attachments.length > 1;
 
   if (singleImage) {
-    sizes = [fitIntoBox(attachments[0], 500, 300)];
+    sizeRows = [[fitIntoBox(attachments[0], 500, 300)]];
   }
 
   const lightboxItems = useMemo(
@@ -68,20 +68,53 @@ export function VisualContainer({
 
   const setSortedList = useEvent((list) => reorderImageAttachments(list.map((a) => a.id)));
 
-  const previews = attachments.map((a, i) => (
-    <VisualAttachment
-      key={a.id}
-      attachment={a}
-      removeAttachment={removeAttachment}
-      reorderImageAttachments={reorderImageAttachments}
-      postId={postId}
-      isNSFW={isNSFW}
-      width={sizes[i].width}
-      height={sizes[i].height}
-      pictureId={lightboxItems[i].pid}
-      handleClick={handleClick}
-    />
-  ));
+  const previews = [];
+  if (withSortable) {
+    // Use the single container and the fixed legacy sizes
+    for (const [i, a] of attachments.entries()) {
+      const { width, height } = legacyThumbnailSize(a);
+      previews.push(
+        <VisualAttachment
+          key={a.id}
+          attachment={a}
+          removeAttachment={removeAttachment}
+          reorderImageAttachments={reorderImageAttachments}
+          postId={postId}
+          isNSFW={isNSFW}
+          width={width}
+          height={height}
+          pictureId={lightboxItems[i].pid}
+          handleClick={handleClick}
+        />,
+      );
+    }
+  } else {
+    // Use multiple rows and the dynamic sizes
+    let n = 0;
+    for (const sizes of sizeRows) {
+      const atts = attachments.slice(n, n + sizes.length);
+      const key = atts.map((a) => a.id).join('-');
+      previews.push(
+        <div key={key} className={style['container-visual__row']}>
+          {atts.map((a, i) => (
+            <VisualAttachment
+              key={a.id}
+              attachment={a}
+              removeAttachment={removeAttachment}
+              reorderImageAttachments={reorderImageAttachments}
+              postId={postId}
+              isNSFW={isNSFW}
+              width={sizes[i].width}
+              height={sizes[i].height}
+              pictureId={lightboxItems[n + i].pid}
+              handleClick={handleClick}
+            />
+          ))}
+        </div>,
+      );
+      n += sizes.length;
+    }
+  }
 
   return (
     <div style={{ '--gap': `${gap}px` }} ref={containerRef}>
@@ -99,7 +132,6 @@ export function VisualContainer({
           preventOnFilter={false}
         >
           {previews}
-          <div className={style['visual__filler']} />
         </Sortable>
       ) : (
         <div
@@ -110,7 +142,6 @@ export function VisualContainer({
           )}
         >
           {previews}
-          <div className={style['visual__filler']} />
         </div>
       )}
     </div>

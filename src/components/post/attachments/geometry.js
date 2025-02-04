@@ -1,15 +1,8 @@
-const thumbnailMaxWidth = 525;
-const thumbnailMaxHeight = 175;
+const legacyThumbnailMaxWidth = 525;
+const legacyThumbnailMaxHeight = 175;
 
-const videoMaxWidth = 500;
-const videoMaxHeight = 400;
-
-export function thumbnailSize(att) {
-  return fitIntoBox(att, thumbnailMaxWidth, thumbnailMaxHeight);
-}
-
-export function videoSize(att) {
-  return fitIntoBox(att, videoMaxWidth, videoMaxHeight);
+export function legacyThumbnailSize(att) {
+  return fitIntoBox(att, legacyThumbnailMaxWidth, legacyThumbnailMaxHeight);
 }
 
 export function fitIntoBox(att, boxWidth, boxHeight) {
@@ -62,27 +55,20 @@ function getGalleryLine(ratios, containerWidth, thumbArea, gap) {
     const avgWidth = (containerWidth - gap * (n - 1)) / n; // Average width of one item
     const height = avgWidth / avgRatio;
     const avgArea = height * avgWidth; // Average area of one item
-    const diff = Math.abs(thumbArea - avgArea);
-    if (diff >= prevDiff) {
+    const diff = Math.log(avgArea / thumbArea);
+    if (Math.abs(diff) >= Math.abs(prevDiff)) {
       return ratios
         .slice(0, n - 1)
         .map((r) => ({ width: Math.floor(r * prevHeight), height: prevHeight }));
-      // return { count: n - 1, height: prevHeight };
     }
     prevDiff = diff;
     prevHeight = Math.round(height);
   }
 
   // Last line
-  if (prevDiff > 0.1 * thumbArea) {
+  if (prevDiff > 0.1) {
     const height = Math.round(Math.sqrt(thumbArea / avgRatio));
     return ratios.map((r) => ({ width: Math.floor(r * height), height }));
-    //return {
-    //      count: n,
-    //      height: Math.round(Math.sqrt(thumbArea / avgRatio)),
-    //    };
   }
   return ratios.map((r) => ({ width: Math.floor(r * prevHeight), height: prevHeight }));
-
-  //  return { length: n, height: prevHeight };
 }

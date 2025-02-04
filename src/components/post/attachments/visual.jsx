@@ -1,15 +1,13 @@
 import cn from 'classnames';
 import { useEvent } from 'react-use-event-hook';
 import { faPlay, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { attachmentPreviewUrl } from '../../../services/api';
 import { formatFileSize } from '../../../utils';
 import { Icon } from '../../fontawesome-icons';
 import { useMediaQuery } from '../../hooks/media-query';
 import style from './attachments.module.scss';
 import { NsfwCanvas } from './nsfw-canvas';
-
-// import { thumbnailSize } from './geometry';
 
 export function VisualAttachment({
   attachment: att,
@@ -23,7 +21,22 @@ export function VisualAttachment({
   const nameAndSize = `${att.fileName} (${formatFileSize(att.fileSize)}, ${att.width}×${att.height}px)`;
   const alt = `${att.mediaType === 'image' ? 'Image' : 'Video'} attachment ${att.fileName}`;
 
-  // const { width, height } = thumbnailSize(att);
+  const [prvWidth, setPrvWidth] = useState(width);
+  const [prvHeight, setPrvHeight] = useState(height);
+
+  useLayoutEffect(() => {
+    // Don't update preview URLs if the size hasn't changed by more than the minimum size difference
+    const minSizeDifference = 40;
+    if (
+      Math.abs(width - prvWidth) < minSizeDifference &&
+      Math.abs(height - prvHeight) < minSizeDifference
+    ) {
+      return;
+    }
+    setPrvWidth(width);
+    setPrvHeight(height);
+  }, [prvWidth, prvHeight, width, height]);
+
   const hiDpi = useMediaQuery('(min-resolution: 1.5x)') ? 2 : 1;
 
   const handleMouseEnter = useEvent((e) => {
@@ -42,8 +55,8 @@ export function VisualAttachment({
     removeAttachment?.(att.id);
   });
 
-  const imageSrc = attachmentPreviewUrl(att.id, 'image', hiDpi * width, hiDpi * height);
-  const videoSrc = attachmentPreviewUrl(att.id, 'video', hiDpi * width, hiDpi * height);
+  const imageSrc = attachmentPreviewUrl(att.id, 'image', hiDpi * prvWidth, hiDpi * prvHeight);
+  const videoSrc = attachmentPreviewUrl(att.id, 'video', hiDpi * prvWidth, hiDpi * prvHeight);
 
   return (
     <a
@@ -83,7 +96,9 @@ export function VisualAttachment({
           )}
         </>
       )}
-      {isNSFW && !removeAttachment && <NsfwCanvas aspectRatio={width / height} src={imageSrc} />}
+      {isNSFW && !removeAttachment && (
+        <NsfwCanvas aspectRatio={prvWidth / prvHeight} src={imageSrc} />
+      )}
       {removeAttachment && (
         <button
           className={cn(
