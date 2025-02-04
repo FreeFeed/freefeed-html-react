@@ -41,12 +41,18 @@
 
 .visual__link {
   position: relative;
-  display: inline-flex;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
-  transition: box-shadow 0.2s;
+  transition:
+    box-shadow 0.2s,
+    background-color 0.2s;
+  display: grid;
+  place-content: center;
+  overflow: clip;
+  background-color: rgba(128, 128, 128, 0.1);
 
   &:hover {
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 1);
+    background-color: rgba(192, 192, 192, 0.1);
   }
 }
 
@@ -54,8 +60,14 @@
   cursor: move;
 }
 
+.visual__image,
 .visual__video {
-  position: absolute;
+  grid-area: 1 / 1;
+}
+
+.visual__image {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
 }
 
 .visual__overlay {

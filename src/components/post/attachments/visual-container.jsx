@@ -1,13 +1,22 @@
 import cn from 'classnames';
 import { useRef, useMemo } from 'react';
 import { useEvent } from 'react-use-event-hook';
+import { clamp } from 'lodash-es';
 import { attachmentPreviewUrl } from '../../../services/api';
 import { openLightbox } from '../../../services/lightbox';
 import { lazyComponent } from '../../lazy-component';
 import style from './attachments.module.scss';
 import { VisualAttachment } from './visual';
 import { useWidthOf } from './use-width-of';
-import { fitIntoBox, getGallerySizes, legacyThumbnailSize } from './geometry';
+import {
+  fitIntoBox,
+  getGallerySizes,
+  maxEditingPreviewHeight,
+  maxEditingPreviewWidth,
+  maxPreviewAspectRatio,
+  minEditingPreviewHeight,
+  minEditingPreviewWidth,
+} from './geometry';
 
 const gap = 8; // px
 const thumbArea = 210 ** 2; // px^2
@@ -27,7 +36,9 @@ export function VisualContainer({
   const containerRef = useRef(null);
   const containerWidth = useWidthOf(containerRef);
 
-  const ratios = attachments.map((a) => a.width / a.height);
+  const ratios = attachments.map((a) =>
+    clamp(a.width / a.height, 1 / maxPreviewAspectRatio, maxPreviewAspectRatio),
+  );
   let sizeRows = getGallerySizes(ratios, containerWidth - 1, thumbArea, gap);
 
   const singleImage = attachments.length === 1;
@@ -71,9 +82,14 @@ export function VisualContainer({
 
   const previews = [];
   if (withSortable) {
-    // Use the single container and the fixed legacy sizes
+    // Use the single container and the fixed legacy sizes for the reorder ability
     for (const [i, a] of attachments.entries()) {
-      const { width, height } = legacyThumbnailSize(a);
+      const { width, height } = fitIntoBox(
+        a,
+        maxEditingPreviewWidth,
+        maxEditingPreviewHeight,
+        true,
+      );
       previews.push(
         <VisualAttachment
           key={a.id}
@@ -82,8 +98,8 @@ export function VisualContainer({
           reorderImageAttachments={reorderImageAttachments}
           postId={postId}
           isNSFW={isNSFW}
-          width={width}
-          height={height}
+          width={Math.max(width, minEditingPreviewWidth)}
+          height={Math.max(height, minEditingPreviewHeight)}
           pictureId={lightboxItems[i].pid}
           handleClick={handleClick}
         />,

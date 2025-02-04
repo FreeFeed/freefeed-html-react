@@ -8,6 +8,7 @@ import { Icon } from '../../fontawesome-icons';
 import { useMediaQuery } from '../../hooks/media-query';
 import style from './attachments.module.scss';
 import { NsfwCanvas } from './nsfw-canvas';
+import { fitIntoBox } from './geometry';
 
 export function VisualAttachment({
   attachment: att,
@@ -21,21 +22,23 @@ export function VisualAttachment({
   const nameAndSize = `${att.fileName} (${formatFileSize(att.fileSize)}, ${att.width}×${att.height}px)`;
   const alt = `${att.mediaType === 'image' ? 'Image' : 'Video'} attachment ${att.fileName}`;
 
-  const [prvWidth, setPrvWidth] = useState(width);
-  const [prvHeight, setPrvHeight] = useState(height);
+  const { width: mediaWidth, height: mediaHeight } = fitIntoBox(att, width, height);
+
+  const [prvWidth, setPrvWidth] = useState(mediaWidth);
+  const [prvHeight, setPrvHeight] = useState(mediaHeight);
 
   useLayoutEffect(() => {
     // Don't update preview URLs if the size hasn't changed by more than the minimum size difference
     const minSizeDifference = 40;
     if (
-      Math.abs(width - prvWidth) < minSizeDifference &&
-      Math.abs(height - prvHeight) < minSizeDifference
+      Math.abs(mediaWidth - prvWidth) < minSizeDifference &&
+      Math.abs(mediaHeight - prvHeight) < minSizeDifference
     ) {
       return;
     }
-    setPrvWidth(width);
-    setPrvHeight(height);
-  }, [prvWidth, prvHeight, width, height]);
+    setPrvWidth(mediaWidth);
+    setPrvHeight(mediaHeight);
+  }, [prvWidth, prvHeight, mediaWidth, mediaHeight]);
 
   const hiDpi = useMediaQuery('(min-resolution: 1.5x)') ? 2 : 1;
 
@@ -67,6 +70,7 @@ export function VisualAttachment({
       onClick={handleClick}
       target="_blank"
       data-pid={pictureId}
+      style={{ width, height }}
     >
       {/**
        * This image is used for the proper lightbox opening animation,
@@ -74,11 +78,12 @@ export function VisualAttachment({
        */}
       <img
         id={pictureId}
+        className={style['visual__image']}
         src={imageSrc}
         alt={alt}
         loading="lazy"
-        width={width}
-        height={height}
+        width={mediaWidth}
+        height={mediaHeight}
         aria-hidden={att.mediaType === 'video'}
       />
       {att.mediaType === 'video' && (
@@ -89,8 +94,8 @@ export function VisualAttachment({
             poster={imageSrc}
             alt={alt}
             loading="lazy"
-            width={width}
-            height={height}
+            width={mediaWidth}
+            height={mediaHeight}
             preload="none"
             muted
             loop

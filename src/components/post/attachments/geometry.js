@@ -1,14 +1,16 @@
-const legacyThumbnailMaxWidth = 525;
-const legacyThumbnailMaxHeight = 175;
+export const maxPreviewAspectRatio = 2.5;
 
-export function legacyThumbnailSize(att) {
-  return fitIntoBox(att, legacyThumbnailMaxWidth, legacyThumbnailMaxHeight);
-}
+export const maxEditingPreviewWidth = 400;
+export const maxEditingPreviewHeight = 175;
+export const minEditingPreviewWidth = 60;
+export const minEditingPreviewHeight = 60;
 
-export function fitIntoBox(att, boxWidth, boxHeight) {
+export function fitIntoBox(att, boxWidth, boxHeight, upscale = false) {
   const [width, height] = [att.previewWidth ?? att.width, att.previewHeight ?? att.height];
-  boxWidth = Math.min(boxWidth, width);
-  boxHeight = Math.min(boxHeight, height);
+  if (!upscale) {
+    boxWidth = Math.min(boxWidth, width);
+    boxHeight = Math.min(boxHeight, height);
+  }
   const wRatio = width / boxWidth;
   const hRatio = height / boxHeight;
 
