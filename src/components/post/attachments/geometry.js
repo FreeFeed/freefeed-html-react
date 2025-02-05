@@ -5,6 +5,12 @@ export const maxEditingPreviewHeight = 175;
 export const minEditingPreviewWidth = 60;
 export const minEditingPreviewHeight = 60;
 
+export const galleryGap = 8;
+
+export const thumbArea = 210 ** 2; // px^2
+export const singleImageThumbArea = 300 ** 2; // px^2
+export const singleImageMaxHeight = 400;
+
 export function fitIntoBox(att, boxWidth, boxHeight, upscale = false) {
   const [width, height] = [att.previewWidth ?? att.width, att.previewHeight ?? att.height];
   if (!upscale) {
