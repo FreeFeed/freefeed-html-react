@@ -41,18 +41,23 @@
 .visual__link {
   color: inherit !important;
   position: relative;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   transition:
     box-shadow 0.2s,
     background-color 0.2s;
   display: grid;
   place-content: center;
-  overflow: clip;
-  background-color: rgba(128, 128, 128, 0.1);
 
   &:hover {
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 1);
-    background-color: rgba(192, 192, 192, 0.1);
+  }
+
+  :global(.dark-theme) & {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+
+    &:hover {
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
   }
 }
 
@@ -66,8 +71,13 @@
 }
 
 .visual__image {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
   background-color: #fff;
+
+  :global(.dark-theme) & {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+    background-color: #999;
+  }
 }
 
 .visual__overlay {
