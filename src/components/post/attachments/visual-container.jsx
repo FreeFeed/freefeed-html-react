@@ -39,13 +39,13 @@ export function VisualContainer({
   const ratios = attachments.map((a) =>
     clamp(a.width / a.height, 1 / maxPreviewAspectRatio, maxPreviewAspectRatio),
   );
-  let sizeRows = getGallerySizes(ratios, containerWidth - 1, thumbArea, gap);
+  let sizeRows = getGallerySizes(ratios, containerWidth, thumbArea, gap);
 
   const singleImage = attachments.length === 1;
   const withSortable = !!removeAttachment && attachments.length > 1;
 
   if (singleImage) {
-    sizeRows = [[fitIntoBox(attachments[0], 500, 300)]];
+    sizeRows = [{ items: [fitIntoBox(attachments[0], 500, 300)] }];
   }
 
   const lightboxItems = useMemo(
@@ -108,11 +108,17 @@ export function VisualContainer({
   } else {
     // Use multiple rows and the dynamic sizes
     let n = 0;
-    for (const sizes of sizeRows) {
-      const atts = attachments.slice(n, n + sizes.length);
+    for (const row of sizeRows) {
+      const atts = attachments.slice(n, n + row.items.length);
       const key = atts.map((a) => a.id).join('-');
       previews.push(
-        <div key={key} className={style['container-visual__row']}>
+        <div
+          key={key}
+          className={cn(
+            style['container-visual__row'],
+            row.stretched && style['container-visual__row--stretched'],
+          )}
+        >
           {atts.map((a, i) => (
             <VisualAttachment
               key={a.id}
@@ -121,15 +127,15 @@ export function VisualContainer({
               reorderImageAttachments={reorderImageAttachments}
               postId={postId}
               isNSFW={isNSFW}
-              width={sizes[i].width}
-              height={sizes[i].height}
+              width={row.items[i].width}
+              height={row.items[i].height}
               pictureId={lightboxItems[n + i].pid}
               handleClick={handleClick}
             />
           ))}
         </div>,
       );
-      n += sizes.length;
+      n += atts.length;
     }
   }
 

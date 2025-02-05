@@ -32,11 +32,10 @@
 .container-visual__row {
   display: flex;
   gap: var(--gap, 5px);
-  justify-content: space-between;
+}
 
-  &:last-child {
-    justify-content: flex-start;
-  }
+.container-visual__row--stretched {
+  justify-content: space-between;
 }
 
 .visual__link {
