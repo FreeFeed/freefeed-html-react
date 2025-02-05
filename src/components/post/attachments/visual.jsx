@@ -1,6 +1,6 @@
 import cn from 'classnames';
 import { useEvent } from 'react-use-event-hook';
-import { faPlay, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useLayoutEffect, useState } from 'react';
 import { attachmentPreviewUrl } from '../../../services/api';
 import { formatFileSize } from '../../../utils';
@@ -72,48 +72,57 @@ export function VisualAttachment({
       data-pid={pictureId}
       style={{ width, height }}
     >
-      {/**
-       * This image is used for the proper lightbox opening animation,
-       * even if the attachment has 'video' type.
-       */}
-      <img
-        id={pictureId}
-        className={style['visual__image']}
-        src={imageSrc}
-        alt={alt}
-        loading="lazy"
-        width={mediaWidth}
-        height={mediaHeight}
-        aria-hidden={att.mediaType === 'video'}
-      />
-      {att.mediaType === 'video' && (
+      {att.meta?.inProgress ? (
+        <div className={style['visual__processing']}>
+          <Icon icon={faSpinner} className={style['visual__processing-icon']} />
+          <span>processing</span>
+        </div>
+      ) : (
         <>
-          <video
-            className={style['visual__video']}
-            src={videoSrc}
-            poster={imageSrc}
+          {/**
+           * This image is used for the proper lightbox opening animation,
+           * even if the attachment has 'video' type.
+           */}
+          <img
+            id={pictureId}
+            className={style['visual__image']}
+            src={imageSrc}
             alt={alt}
             loading="lazy"
             width={mediaWidth}
             height={mediaHeight}
-            preload="none"
-            muted
-            loop
-            playsInline
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onTimeUpdate={handleTimeUpdate}
+            aria-hidden={att.mediaType === 'video'}
           />
           {att.mediaType === 'video' && (
-            <div className={cn(style['visual__overlay'], style['visual__overlay--info'])}>
-              {att.meta?.animatedImage ? <span>GIF</span> : <Icon icon={faPlay} />}
-              {formatTime(att.duration - currentTime)}
-            </div>
+            <>
+              <video
+                className={style['visual__video']}
+                src={videoSrc}
+                poster={imageSrc}
+                alt={alt}
+                loading="lazy"
+                width={mediaWidth}
+                height={mediaHeight}
+                preload="none"
+                muted
+                loop
+                playsInline
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                onTimeUpdate={handleTimeUpdate}
+              />
+              {att.mediaType === 'video' && (
+                <div className={cn(style['visual__overlay'], style['visual__overlay--info'])}>
+                  {att.meta?.animatedImage ? <span>GIF</span> : <Icon icon={faPlay} />}
+                  {formatTime(att.duration - currentTime)}
+                </div>
+              )}
+            </>
+          )}
+          {isNSFW && !removeAttachment && (
+            <NsfwCanvas aspectRatio={prvWidth / prvHeight} src={imageSrc} />
           )}
         </>
-      )}
-      {isNSFW && !removeAttachment && (
-        <NsfwCanvas aspectRatio={prvWidth / prvHeight} src={imageSrc} />
       )}
       {removeAttachment && (
         <button

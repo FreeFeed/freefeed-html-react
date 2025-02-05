@@ -39,6 +39,7 @@
 }
 
 .visual__link {
+  color: inherit !important;
   position: relative;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
   transition:
@@ -111,6 +112,27 @@
   right: 0.3em;
   padding: 0.2em;
   font-size: 1.2em;
+}
+
+.visual__processing {
+  opacity: 0.8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.visual__processing-icon {
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .audio__player {

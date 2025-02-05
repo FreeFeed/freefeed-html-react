@@ -192,8 +192,15 @@ function initLightbox() {
   });
 
   // Show animated images as a looped video without controls
-  lightbox.on('contentLoad', ({ content }) => {
-    const { data, element } = content;
+  lightbox.on('contentLoad', (e) => {
+    const { data, element } = e.content;
+    if (data.meta?.inProgress) {
+      e.preventDefault();
+      e.content.element = document.createElement('div');
+      e.content.element.classList.add('pswp__processing-indicator');
+      e.content.element.textContent = 'Processing media...';
+      return;
+    }
     if (data.type === 'video') {
       if (data.meta.animatedImage || (data.meta.silent && data.duration <= 5)) {
         element.muted = true;

@@ -26,7 +26,7 @@ export function Attachments({
     const audial = [];
     const general = [];
     for (const a of attachments) {
-      if (a.mediaType === 'image' || (a.mediaType === 'video' && !a.meta?.inProgress)) {
+      if (a.mediaType === 'image' || a.mediaType === 'video') {
         visual.push(a);
       } else if (a.mediaType === 'audio') {
         audial.push(a);

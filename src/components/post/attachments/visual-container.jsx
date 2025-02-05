@@ -69,7 +69,7 @@ export function VisualContainer({
         ...(a.mediaType === 'image'
           ? { type: 'image', src: attachmentPreviewUrl(a.id, 'image') }
           : {
-              type: 'video',
+              type: a.meta?.inProgress ? 'in-progress' : 'video',
               videoSrc: attachmentPreviewUrl(a.id, 'video'),
               msrc: attachmentPreviewUrl(a.id, 'image'),
               meta: a.meta ?? {},
