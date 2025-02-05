@@ -38,6 +38,10 @@ export function getGallerySizes(ratios, containerWidth, thumbArea, gap) {
   while (start < ratios.length) {
     const line = getGalleryLine(ratios.slice(start), containerWidth, thumbArea, gap);
     lines.push(line);
+    if (line.items.length === 0) {
+      // Prevent infinite loop
+      throw new Error('Empty gallery line');
+    }
     start += line.items.length;
   }
   return lines;
@@ -51,6 +55,14 @@ export function getGallerySizes(ratios, containerWidth, thumbArea, gap) {
  * @returns {GalleryRow}
  */
 function getGalleryLine(ratios, containerWidth, thumbArea, gap) {
+  if (containerWidth < Math.sqrt(thumbArea)) {
+    // A very narrow container (or just the first render), leave only the first item
+    return {
+      items: [{ width: containerWidth, height: Math.round(containerWidth / ratios[0]) }],
+      stretched: true,
+    };
+  }
+
   // Maximum average upscale factor for the line
   const maxStretch = 0.4;
 

@@ -80,6 +80,11 @@ export function VisualContainer({
 
   const setSortedList = useEvent((list) => reorderImageAttachments(list.map((a) => a.id)));
 
+  if (containerWidth === 0) {
+    // Looks like a first render, don't render content
+    return <div ref={containerRef} />;
+  }
+
   const previews = [];
   if (withSortable) {
     // Use the single container and the fixed legacy sizes for the reorder ability
