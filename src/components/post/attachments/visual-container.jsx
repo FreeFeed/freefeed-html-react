@@ -20,6 +20,8 @@ import {
 
 const gap = 8; // px
 const thumbArea = 210 ** 2; // px^2
+const singleImageThumbArea = 300 ** 2; // px^2
+const singleImageMaxHeight = 400;
 
 const Sortable = lazyComponent(() => import('../../react-sortable'), {
   fallback: <div>Loading component...</div>,
@@ -39,13 +41,26 @@ export function VisualContainer({
   const ratios = attachments.map((a) =>
     clamp(a.width / a.height, 1 / maxPreviewAspectRatio, maxPreviewAspectRatio),
   );
-  let sizeRows = getGallerySizes(ratios, containerWidth, thumbArea, gap);
 
+  const isEditing = !!removeAttachment || !!reorderImageAttachments;
   const singleImage = attachments.length === 1;
-  const withSortable = !!removeAttachment && attachments.length > 1;
+  const withSortable = isEditing && attachments.length > 1;
 
-  if (singleImage) {
-    sizeRows = [{ items: [fitIntoBox(attachments[0], 500, 300)] }];
+  const sizeRows = getGallerySizes(
+    ratios,
+    containerWidth,
+    singleImage ? singleImageThumbArea : thumbArea,
+    gap,
+  );
+
+  if (singleImage && sizeRows[0].items[0].height > singleImageMaxHeight) {
+    sizeRows[0].items[0] = fitIntoBox(
+      attachments[0],
+      singleImageMaxHeight,
+      singleImageMaxHeight,
+      true,
+    );
+    sizeRows[0].stretched = false;
   }
 
   const lightboxItems = useMemo(
@@ -86,7 +101,7 @@ export function VisualContainer({
   }
 
   const previews = [];
-  if (withSortable) {
+  if (isEditing) {
     // Use the single container and the fixed legacy sizes for the reorder ability
     for (const [i, a] of attachments.entries()) {
       const { width, height } = fitIntoBox(
