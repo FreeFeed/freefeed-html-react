@@ -104,7 +104,7 @@ export function VisualContainerStatic({
             <button
               className={style['fold__icon']}
               onClick={toggleFold}
-              title={isFolded ? 'Show all' : 'Show less'}
+              title={isFolded ? `Show all (${attachments.length})` : 'Show less'}
             >
               <Icon icon={isFolded ? faChevronCircleRight : faChevronCircleLeft} />
             </button>
