@@ -24,6 +24,7 @@ export function LikeAVideo({ attachment: att }) {
           title={att.fileName}
           autoPlay
           controls
+          disablePictureInPicture
           src={attachmentPreviewUrl(att.id, 'original')}
         />
       </div>

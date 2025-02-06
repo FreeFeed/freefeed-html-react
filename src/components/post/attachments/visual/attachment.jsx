@@ -112,6 +112,7 @@ export function VisualAttachment({
                 muted
                 loop
                 playsInline
+                disablePictureInPicture
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onTimeUpdate={handleTimeUpdate}

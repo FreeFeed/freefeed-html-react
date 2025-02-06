@@ -38,6 +38,7 @@ exports[`PostAttachments > Displays all post attachment types 1`] = `
             <video
               alt="Video attachment sunrise.mp4"
               class="video"
+              disablepictureinpicture=""
               height="190"
               loading="lazy"
               loop=""

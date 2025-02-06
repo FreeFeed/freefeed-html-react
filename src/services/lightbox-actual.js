@@ -189,6 +189,7 @@ function initLightbox() {
       return;
     }
     if (data.type === 'video') {
+      element.disablePictureInPicture = true;
       if (data.meta.animatedImage || (data.meta.silent && data.duration <= 5)) {
         element.muted = true;
         element.loop = true;
