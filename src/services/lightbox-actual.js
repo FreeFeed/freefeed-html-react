@@ -153,6 +153,19 @@ function initLightbox() {
     Mousetrap.unbind(fullScreenHotKeys);
   });
 
+  // Fix dimensions for images without known width/height
+  lightbox.on('contentLoadImage', ({ content }) => {
+    const { data, index } = content;
+    if (data.autoSize) {
+      delete data.autoSize;
+      whenImageAndPswpLoaded(data.src, lightbox, (image, pswp) => {
+        data.width = image.width;
+        data.height = image.height;
+        pswp.refreshSlideContent(index);
+      });
+    }
+  });
+
   // Mount/unmount HTML content. This content can contain interactive players,
   // so for reliable playback stopping we need to unmount it when the slide
   // deactivates.
@@ -203,4 +216,34 @@ function initLightbox() {
   // Init
   lightbox.init();
   return lightbox;
+}
+
+function whenImageAndPswpLoaded(src, lightbox, action) {
+  const image = new Image();
+  image.src = src;
+  whenImageLoaded(image, () => {
+    if (lightbox.pswp) {
+      action(image, lightbox.pswp);
+    } else {
+      lightbox.on('afterInit', () => action(image, lightbox.pswp));
+    }
+  });
+}
+
+/**
+ * Image has not "metadataloaded" event, and the "load" event fires only when
+ * the whole image is loaded. So, to obtain the image dimensions faster, we need
+ * to periodically check if the image.width is defined (not zero). When it is,
+ * we have the image dimensions, even if the whole image is not loaded yet.
+ *
+ * @param {Image} image
+ * @param {Function} action
+ */
+function whenImageLoaded(image, action) {
+  const interval = 100; // ms
+  if (image.complete || image.width > 0) {
+    action();
+  } else {
+    setTimeout(() => whenImageLoaded(image, action), interval);
+  }
 }
