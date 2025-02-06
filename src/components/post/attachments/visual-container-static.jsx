@@ -1,6 +1,9 @@
 import cn from 'classnames';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { clamp } from 'lodash-es';
+import { faChevronCircleLeft, faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
+import { useEvent } from 'react-use-event-hook';
+import { Icon } from '../../fontawesome-icons';
 import style from './attachments.module.scss';
 import { useItemClickHandler, useLightboxItems, useWidthOf } from './hooks';
 import {
@@ -20,6 +23,7 @@ export function VisualContainerStatic({
   removeAttachment,
   reorderImageAttachments,
   postId,
+  isExpanded,
 }) {
   const containerRef = useRef(null);
   const containerWidth = useWidthOf(containerRef);
@@ -50,6 +54,17 @@ export function VisualContainerStatic({
     sizeRows[0].stretched = false;
   }
 
+  const needFolding = sizeRows.length > 1 && !isExpanded;
+  const [isFolded, setIsFolded] = useState(true);
+
+  const toggleFold = useEvent(() => setIsFolded(!isFolded));
+
+  useEffect(() => {
+    if (!needFolding) {
+      setIsFolded(true);
+    }
+  }, [needFolding]);
+
   if (containerWidth === 0) {
     // Looks like a first render, don't render content
     return <div ref={containerRef} />;
@@ -59,9 +74,14 @@ export function VisualContainerStatic({
 
   // Use multiple rows and the dynamic sizes
   let n = 0;
-  for (const row of sizeRows) {
+  for (let k = 0; k < sizeRows.length; k++) {
+    const row = sizeRows[k];
     const atts = attachments.slice(n, n + row.items.length);
     const key = atts.map((a) => a.id).join('-');
+
+    const showIcon =
+      needFolding && ((!isFolded && k === sizeRows.length - 1) || (isFolded && k === 0));
+
     previews.push(
       <div
         key={key}
@@ -84,9 +104,24 @@ export function VisualContainerStatic({
             handleClick={handleClick}
           />
         ))}
+        {showIcon && (
+          <div className={style['container-visual__fold-box']}>
+            <button
+              className={style['container-visual__fold-icon']}
+              onClick={toggleFold}
+              title={isFolded ? 'Show all' : 'Show less'}
+            >
+              <Icon icon={isFolded ? faChevronCircleRight : faChevronCircleLeft} />
+            </button>
+          </div>
+        )}
       </div>,
     );
     n += atts.length;
+    if (showIcon && isFolded) {
+      // Show only the first row
+      break;
+    }
   }
 
   return (

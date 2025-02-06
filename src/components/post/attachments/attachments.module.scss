@@ -1,3 +1,5 @@
+@import '../../../../styles/helvetica/dark-vars.scss';
+
 .attachments a {
   color: #000088;
   text-decoration: none;
@@ -32,6 +34,48 @@
 .container-visual__row {
   display: flex;
   gap: var(--gap, 5px);
+  position: relative;
+}
+
+.container-visual__fold-box {
+  flex: 1;
+  position: relative;
+
+  .container-visual__row--stretched & {
+    position: absolute;
+    height: 100%;
+    right: 0;
+  }
+}
+
+.container-visual__fold-icon {
+  cursor: pointer;
+  color: #8ab;
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 6px;
+  border: none;
+  font-size: 26px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: auto;
+  transform: translate(-16px, -50%);
+
+  :global(.dark-theme) & {
+    color: $link-color-dim;
+    background-color: $bg-color;
+  }
+
+  .container-visual__row--stretched & {
+    left: auto;
+    right: 0;
+    transform: translate(21px, -50%);
+
+    @media (max-width: 768px) {
+      transform: translate(14px, -50%);
+    }
+  }
 }
 
 .container-visual__row--stretched {

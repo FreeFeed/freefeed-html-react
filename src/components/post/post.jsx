@@ -461,7 +461,7 @@ class Post extends Component {
                       postId={props.id}
                       attachmentIds={this.props.attachments}
                       isNSFW={props.isNSFW}
-                      isSinglePost={props.isSinglePost}
+                      isExpanded={props.isSinglePost}
                     />
                     {!this.props.noImageAttachments && props.isNSFW && (
                       <div className="nsfw-bar">
