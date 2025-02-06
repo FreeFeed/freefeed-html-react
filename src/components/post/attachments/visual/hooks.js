@@ -5,8 +5,10 @@ import { openLightbox } from '../../../../services/lightbox';
 
 const resizeHandlers = new Map();
 
+const defaultWidth = process.env.NODE_ENV !== 'test' ? 0 : 600;
+
 export function useWidthOf(elRef) {
-  const [width, setWidth] = useState(elRef.current?.offsetWidth || 0);
+  const [width, setWidth] = useState(elRef.current?.offsetWidth || defaultWidth);
   useEffect(() => {
     const el = elRef.current;
     resizeHandlers.set(el, setWidth);

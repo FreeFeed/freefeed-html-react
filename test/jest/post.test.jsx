@@ -12,8 +12,8 @@ vi.mock('../../src/components/post/post-comments', () => ({
   },
 }));
 
-vi.mock('../../src/components/post/post-attachments', () => ({
-  default: ({ attachmentIds }) => {
+vi.mock('../../src/components/post/attachments/attachments', () => ({
+  Attachments: ({ attachmentIds }) => {
     return (
       <div>{attachmentIds.length > 0 ? `Mocked ${attachmentIds.length} attachments` : ''}</div>
     );
