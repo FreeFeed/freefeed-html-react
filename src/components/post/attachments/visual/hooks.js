@@ -74,3 +74,40 @@ export function useItemClickHandler(lightboxItems) {
     openLightbox(index, lightboxItems, el.target);
   });
 }
+
+// Prevent video from playing infinitely (we has this situation once and don't
+// want it to happen again)
+export function useStopVideo(videoRef, enabled) {
+  useEffect(() => {
+    if (!enabled || !videoRef.current) {
+      return;
+    }
+    const videoEl = videoRef.current;
+
+    // By default, the video playback should be paused after 5 minutes
+    const defaultPlayTime = 300 * 1000;
+    let maxPlayTime = Number.isFinite(videoEl.duration)
+      ? videoEl.duration * 10 * 1000
+      : defaultPlayTime;
+
+    let playTimer = 0;
+    const onPlay = () => {
+      clearTimeout(playTimer);
+      playTimer = setTimeout(() => videoEl.pause(), maxPlayTime);
+    };
+    const onPause = () => clearTimeout(playTimer);
+
+    const onDurationChange = () => {
+      // Video in playback mode should not be longer than 10 times of the video duration
+      maxPlayTime = Math.max(defaultPlayTime, videoEl.duration * 10 * 1000);
+    };
+    const abortController = new AbortController();
+    const { signal } = abortController;
+
+    videoEl.addEventListener('durationchange', onDurationChange, { once: true, signal });
+    videoEl.addEventListener('play', onPlay, { signal });
+    videoEl.addEventListener('pause', onPause, { signal });
+    signal.addEventListener('abort', onPause);
+    return () => abortController.abort();
+  }, [enabled, videoRef]);
+}

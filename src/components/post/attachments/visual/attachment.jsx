@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import { useEvent } from 'react-use-event-hook';
 import { faPlay, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { attachmentPreviewUrl } from '../../../../services/api';
 import { formatFileSize } from '../../../../utils';
 import { Icon } from '../../../fontawesome-icons';
@@ -9,6 +9,7 @@ import { useMediaQuery } from '../../../hooks/media-query';
 import style from './visual.module.scss';
 import { NsfwCanvas } from './nsfw-canvas';
 import { fitIntoBox } from './geometry';
+import { useStopVideo } from './hooks';
 
 export function VisualAttachment({
   attachment: att,
@@ -61,6 +62,9 @@ export function VisualAttachment({
   const imageSrc = attachmentPreviewUrl(att.id, 'image', hiDpi * prvWidth, hiDpi * prvHeight);
   const videoSrc = attachmentPreviewUrl(att.id, 'video', hiDpi * prvWidth, hiDpi * prvHeight);
 
+  const videoRef = useRef(null);
+  useStopVideo(videoRef, att.mediaType === 'video' && !att.meta?.inProgress);
+
   return (
     <a
       role="figure"
@@ -96,6 +100,7 @@ export function VisualAttachment({
           {att.mediaType === 'video' && (
             <>
               <video
+                ref={videoRef}
                 className={style['video']}
                 src={videoSrc}
                 poster={imageSrc}

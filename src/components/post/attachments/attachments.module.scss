@@ -59,3 +59,26 @@
   border-radius: 0.35em;
   outline: 3px solid rgba(255, 255, 255, 0.5);
 }
+
+.like-a-video {
+  margin-bottom: 0.5em;
+}
+
+.like-a-video__button {
+  border: none;
+  display: flex;
+  width: 3em;
+  height: 3em;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px;
+  background-color: rgba(128, 128, 128, 0.2);
+  font-size: 2em;
+}
+
+.like-a-video__player {
+  max-width: 100%;
+  width: 400px;
+  height: auto;
+  background-color: #eee;
+}
