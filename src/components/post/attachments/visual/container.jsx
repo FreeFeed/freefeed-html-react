@@ -1,5 +1,5 @@
-import { VisualContainerEditable } from './visual-container-editable';
-import { VisualContainerStatic } from './visual-container-static';
+import { VisualContainerEditable } from './container-editable';
+import { VisualContainerStatic } from './container-static';
 
 export function VisualContainer(props) {
   if (props.removeAttachment || props.reorderImageAttachments) {

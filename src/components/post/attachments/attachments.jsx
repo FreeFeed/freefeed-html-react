@@ -6,7 +6,7 @@ import ErrorBoundary from '../../error-boundary';
 import { GeneralAttachment } from './general';
 import { AudioAttachment } from './audio';
 import style from './attachments.module.scss';
-import { VisualContainer } from './visual-container';
+import { VisualContainer } from './visual/container';
 
 export function Attachments({
   attachmentIds,

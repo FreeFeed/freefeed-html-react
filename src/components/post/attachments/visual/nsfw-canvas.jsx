@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import style from './attachments.module.scss';
+import style from './visual.module.scss';
 
 const NSFW_PREVIEW_AREA = 20;
 

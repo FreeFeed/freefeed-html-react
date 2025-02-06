@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useEvent } from 'react-use-event-hook';
-import { attachmentPreviewUrl } from '../../../services/api';
-import { openLightbox } from '../../../services/lightbox';
+import { attachmentPreviewUrl } from '../../../../services/api';
+import { openLightbox } from '../../../../services/lightbox';
 
 const resizeHandlers = new Map();
 

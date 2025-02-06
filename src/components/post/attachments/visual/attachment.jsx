@@ -2,11 +2,11 @@ import cn from 'classnames';
 import { useEvent } from 'react-use-event-hook';
 import { faPlay, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useLayoutEffect, useState } from 'react';
-import { attachmentPreviewUrl } from '../../../services/api';
-import { formatFileSize } from '../../../utils';
-import { Icon } from '../../fontawesome-icons';
-import { useMediaQuery } from '../../hooks/media-query';
-import style from './attachments.module.scss';
+import { attachmentPreviewUrl } from '../../../../services/api';
+import { formatFileSize } from '../../../../utils';
+import { Icon } from '../../../fontawesome-icons';
+import { useMediaQuery } from '../../../hooks/media-query';
+import style from './visual.module.scss';
 import { NsfwCanvas } from './nsfw-canvas';
 import { fitIntoBox } from './geometry';
 
@@ -64,7 +64,7 @@ export function VisualAttachment({
   return (
     <a
       role="figure"
-      className={style['visual__link']}
+      className={style['link']}
       href={attachmentPreviewUrl(att.id, 'original')}
       title={nameAndSize}
       onClick={handleClick}
@@ -73,8 +73,8 @@ export function VisualAttachment({
       style={{ width, height }}
     >
       {att.meta?.inProgress ? (
-        <div className={style['visual__processing']}>
-          <Icon icon={faSpinner} className={style['visual__processing-icon']} />
+        <div className={style['processing']}>
+          <Icon icon={faSpinner} className={style['processing__icon']} />
           <span>processing</span>
         </div>
       ) : (
@@ -85,7 +85,7 @@ export function VisualAttachment({
            */}
           <img
             id={pictureId}
-            className={style['visual__image']}
+            className={style['image']}
             src={imageSrc}
             alt={alt}
             loading="lazy"
@@ -96,7 +96,7 @@ export function VisualAttachment({
           {att.mediaType === 'video' && (
             <>
               <video
-                className={style['visual__video']}
+                className={style['video']}
                 src={videoSrc}
                 poster={imageSrc}
                 alt={alt}
@@ -112,7 +112,7 @@ export function VisualAttachment({
                 onTimeUpdate={handleTimeUpdate}
               />
               {att.mediaType === 'video' && (
-                <div className={cn(style['visual__overlay'], style['visual__overlay--info'])}>
+                <div className={cn(style['overlay'], style['overlay--info'])}>
                   {att.meta?.animatedImage ? <span>GIF</span> : <Icon icon={faPlay} />}
                   {formatTime(att.duration - currentTime)}
                 </div>
@@ -126,11 +126,7 @@ export function VisualAttachment({
       )}
       {removeAttachment && (
         <button
-          className={cn(
-            style['visual__overlay'],
-            style['visual__overlay--remove'],
-            style['visual__overlay--button'],
-          )}
+          className={cn(style['overlay'], style['overlay--remove'], style['overlay--button'])}
           onClick={handleRemove}
         >
           <Icon icon={faTimes} />

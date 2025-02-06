@@ -1,7 +1,8 @@
 import cn from 'classnames';
 import { useEvent } from 'react-use-event-hook';
-import { lazyComponent } from '../../lazy-component';
-import style from './attachments.module.scss';
+import { lazyComponent } from '../../../lazy-component';
+import aStyle from '../attachments.module.scss';
+import style from './visual.module.scss';
 import { useItemClickHandler, useLightboxItems } from './hooks';
 import {
   fitIntoBox,
@@ -11,9 +12,9 @@ import {
   minEditingPreviewHeight,
   minEditingPreviewWidth,
 } from './geometry';
-import { VisualAttachment } from './visual';
+import { VisualAttachment } from './attachment';
 
-const Sortable = lazyComponent(() => import('../../react-sortable'), {
+const Sortable = lazyComponent(() => import('../../../react-sortable'), {
   fallback: <div>Loading component...</div>,
   errorMessage: "Couldn't load Sortable component",
 });
@@ -55,20 +56,20 @@ export function VisualContainerEditable({
       {withSortable ? (
         <Sortable
           className={cn(
-            style['container'],
+            aStyle['container'],
             style['container--visual'],
             withSortable && style['container--sortable'],
           )}
           list={attachments}
           setList={setSortedList}
-          filter={`.${style['visual__overlay--button']},.${style['visual__filler']}`}
+          filter={`.${style['overlay--button']}`}
           /* Bug on iOS, see https://github.com/SortableJS/react-sortablejs/issues/270 */
           preventOnFilter={false}
         >
           {previews}
         </Sortable>
       ) : (
-        <div className={cn(style['container'], style['container--visual'])}>{previews}</div>
+        <div className={cn(aStyle['container'], style['container--visual'])}>{previews}</div>
       )}
     </div>
   );

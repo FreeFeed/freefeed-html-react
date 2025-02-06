@@ -3,8 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import { clamp } from 'lodash-es';
 import { faChevronCircleLeft, faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
 import { useEvent } from 'react-use-event-hook';
-import { Icon } from '../../fontawesome-icons';
-import style from './attachments.module.scss';
+import { Icon } from '../../../fontawesome-icons';
+import aStyle from '../attachments.module.scss';
+import style from './visual.module.scss';
+import { VisualAttachment } from './attachment';
 import { useItemClickHandler, useLightboxItems, useWidthOf } from './hooks';
 import {
   fitIntoBox,
@@ -15,7 +17,6 @@ import {
   singleImageThumbArea,
   thumbArea,
 } from './geometry';
-import { VisualAttachment } from './visual';
 
 export function VisualContainerStatic({
   attachments,
@@ -83,13 +84,7 @@ export function VisualContainerStatic({
       needFolding && ((!isFolded && k === sizeRows.length - 1) || (isFolded && k === 0));
 
     previews.push(
-      <div
-        key={key}
-        className={cn(
-          style['container-visual__row'],
-          row.stretched && style['container-visual__row--stretched'],
-        )}
-      >
+      <div key={key} className={cn(style['row'], row.stretched && style['row--stretched'])}>
         {atts.map((a, i) => (
           <VisualAttachment
             key={a.id}
@@ -105,9 +100,9 @@ export function VisualContainerStatic({
           />
         ))}
         {showIcon && (
-          <div className={style['container-visual__fold-box']}>
+          <div className={style['fold__box']}>
             <button
-              className={style['container-visual__fold-icon']}
+              className={style['fold__icon']}
               onClick={toggleFold}
               title={isFolded ? 'Show all' : 'Show less'}
             >
@@ -126,7 +121,7 @@ export function VisualContainerStatic({
 
   return (
     <div style={{ '--gap': `${galleryGap}px` }} ref={containerRef}>
-      <div className={cn(style['container'], style['container--visual'])}>{previews}</div>
+      <div className={cn(aStyle['container'], style['container--visual'])}>{previews}</div>
     </div>
   );
 }
