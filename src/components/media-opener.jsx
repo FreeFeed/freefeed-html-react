@@ -16,6 +16,8 @@ export const getMediaType = (url) => {
   try {
     if (new URL(url).pathname.match(/\.(jpg|png|jpeg|webp|gif)$/i)) {
       return 'image';
+    } else if (new URL(url).pathname.match(/\.mp4$/i)) {
+      return 'video';
     } else if (isInstagram(url)) {
       return 'instagram';
     }
@@ -57,6 +59,17 @@ export function MediaOpener({ url, mediaType, attachmentsRef, children }) {
                   width: 1,
                   height: 1,
                   autoSize: true,
+                };
+              } else if (mediaType === 'video') {
+                return {
+                  videoSrc: url,
+                  // Empty image for placeholder
+                  msrc: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>',
+                  type: 'video',
+                  width: 1,
+                  height: 1,
+                  autoSize: true,
+                  meta: {},
                 };
               }
               return await getEmbeddableItem(url, mediaType, idx === index);

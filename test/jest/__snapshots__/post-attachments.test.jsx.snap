@@ -19,7 +19,7 @@ exports[`PostAttachments > Displays all post attachment types 1`] = `
           <a
             class="link"
             data-pid="new-post-vi1"
-            href="https://candy.freefeed.net/v4/attachments/vi1/original?redirect"
+            href="https://candy.freefeed.net/v4/attachments/vi1/original?redirect="
             role="figure"
             style="width: 337px; height: 190px;"
             target="_blank"
@@ -70,7 +70,7 @@ exports[`PostAttachments > Displays all post attachment types 1`] = `
           <a
             class="link"
             data-pid="new-post-im1"
-            href="https://candy.freefeed.net/v4/attachments/im1/original?redirect"
+            href="https://candy.freefeed.net/v4/attachments/im1/original?redirect="
             role="figure"
             style="width: 253px; height: 190px;"
             target="_blank"
@@ -141,7 +141,7 @@ exports[`PostAttachments > Displays all post attachment types 1`] = `
           >
             <a
               class="original-link"
-              href="https://candy.freefeed.net/v4/attachments/au1/original?redirect"
+              href="https://candy.freefeed.net/v4/attachments/au1/original?redirect="
               target="_blank"
             >
               <span
@@ -163,7 +163,7 @@ exports[`PostAttachments > Displays all post attachment types 1`] = `
             class="audio__player"
             controls=""
             preload="none"
-            src="https://candy.freefeed.net/v4/attachments/au1/audio?redirect"
+            src="https://candy.freefeed.net/v4/attachments/au1/audio?redirect="
             title="Oasis – Wonderwall (1.2 MiB)"
           />
         </div>
@@ -193,7 +193,7 @@ exports[`PostAttachments > Displays all post attachment types 1`] = `
           >
             <a
               class="original-link"
-              href="https://candy.freefeed.net/v4/attachments/ge1/original?redirect"
+              href="https://candy.freefeed.net/v4/attachments/ge1/original?redirect="
               target="_blank"
             >
               <span

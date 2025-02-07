@@ -784,8 +784,11 @@ export function getAttachmentInfo({ attId }) {
   return fetch(`${apiPrefix}/attachments/${attId}`, getRequestOptions());
 }
 
-export function attachmentPreviewUrl(attId, type, width = null, height = null) {
-  const url = new URL(`${apiPrefix}/attachments/${attId}/${type}?redirect`);
+export function attachmentPreviewUrl(attId, type, width = null, height = null, redirect = true) {
+  const url = new URL(`${apiPrefix}/attachments/${attId}/${type}`);
+  if (redirect) {
+    url.searchParams.set('redirect', '');
+  }
   if (width && height) {
     url.searchParams.set('width', width);
     url.searchParams.set('height', height);

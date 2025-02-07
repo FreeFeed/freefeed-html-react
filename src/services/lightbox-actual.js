@@ -89,7 +89,12 @@ function initLightbox() {
         el.setAttribute('rel', 'noopener');
 
         pswp.on('change', () => {
-          el.href = pswp.currSlide.data.originalSrc;
+          if (pswp.currSlide.data.originalSrc) {
+            el.href = pswp.currSlide.data.originalSrc;
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
         });
       },
     });
@@ -154,19 +159,6 @@ function initLightbox() {
     Mousetrap.unbind(fullScreenHotKeys);
   });
 
-  // Fix dimensions for images without known width/height
-  lightbox.on('contentLoadImage', ({ content }) => {
-    const { data, index } = content;
-    if (data.autoSize) {
-      delete data.autoSize;
-      whenImageAndPswpLoaded(data.src, lightbox, (image, pswp) => {
-        data.width = image.width;
-        data.height = image.height;
-        pswp.refreshSlideContent(index);
-      });
-    }
-  });
-
   // Mount/unmount HTML content. This content can contain interactive players,
   // so for reliable playback stopping we need to unmount it when the slide
   // deactivates.
@@ -190,6 +182,29 @@ function initLightbox() {
     const h = () => unscrollTo(pinnedEls);
     window.addEventListener('scroll', h, { once: true });
     setTimeout(() => window.removeEventListener('scroll', h, { once: true }), 500);
+  });
+
+  // Fix dimensions of media without known width/height
+  lightbox.on('contentLoad', ({ content }) => {
+    const { data, index } = content;
+    if (!data.autoSize) {
+      return;
+    }
+    if (data.type === 'image') {
+      whenImageAndPswpLoaded(data.src, lightbox, (image, pswp) => {
+        delete data.autoSize;
+        data.width = image.width;
+        data.height = image.height;
+        pswp.refreshSlideContent(index);
+      });
+    } else if (data.type === 'video') {
+      whenVideoAndPswpLoaded(content.element, lightbox, (video, pswp) => {
+        delete data.autoSize;
+        data.width = video.videoWidth;
+        data.height = video.videoHeight;
+        pswp.refreshSlideContent(index);
+      });
+    }
   });
 
   // Show animated images as a looped video without controls
@@ -232,7 +247,7 @@ function whenImageAndPswpLoaded(src, lightbox, action) {
 }
 
 /**
- * Image has not "metadataloaded" event, and the "load" event fires only when
+ * Image has not "loadedmetadata" event, and the "load" event fires only when
  * the whole image is loaded. So, to obtain the image dimensions faster, we need
  * to periodically check if the image.width is defined (not zero). When it is,
  * we have the image dimensions, even if the whole image is not loaded yet.
@@ -247,4 +262,22 @@ function whenImageLoaded(image, action) {
   } else {
     setTimeout(() => whenImageLoaded(image, action), interval);
   }
+}
+
+function whenVideoLoaded(video, action) {
+  if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+    action();
+  } else {
+    video.addEventListener('loadedmetadata', () => action(), { once: true });
+  }
+}
+
+function whenVideoAndPswpLoaded(video, lightbox, action) {
+  whenVideoLoaded(video, () => {
+    if (lightbox.pswp) {
+      action(video, lightbox.pswp);
+    } else {
+      lightbox.on('afterInit', () => action(video, lightbox.pswp));
+    }
+  });
 }
