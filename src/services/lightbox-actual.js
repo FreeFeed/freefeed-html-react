@@ -8,6 +8,7 @@ import 'photoswipe/photoswipe.css';
 import '../../styles/shared/lighbox.scss';
 import { getFullscreenAPI } from '../utils/fullscreen';
 import { pinnedElements, unscrollTo } from './unscroll';
+import { handlePip } from './pip-video';
 
 const prevHotKeys = ['a', 'ф', 'h', 'р', '4'];
 const nextHotKeys = ['d', 'в', 'k', 'л', '6'];
@@ -202,7 +203,7 @@ function initLightbox() {
       return;
     }
     if (data.type === 'video') {
-      element.disablePictureInPicture = true;
+      handlePip(element);
       if (data.meta.animatedImage || (data.meta.silent && data.duration <= 5)) {
         element.muted = true;
         element.loop = true;
