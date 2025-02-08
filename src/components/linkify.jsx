@@ -9,6 +9,7 @@ import ErrorBoundary from './error-boundary';
 import { tokenToElement } from './linkify-elements';
 import Spoiler from './spoiler';
 import UserName from './user-name';
+import { MediaLinksProvider } from './media-links/provider';
 
 export default function Linkify({
   children,
@@ -36,7 +37,9 @@ export default function Linkify({
 
   return (
     <span className={cn('Linkify', className)} dir="auto" role="region">
-      <ErrorBoundary>{formatted}</ErrorBoundary>
+      <ErrorBoundary>
+        <MediaLinksProvider>{formatted}</MediaLinksProvider>
+      </ErrorBoundary>
     </span>
   );
 }
