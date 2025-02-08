@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useEvent } from 'react-use-event-hook';
 import { attachmentPreviewUrl } from '../../../../services/api';
 import { openLightbox } from '../../../../services/lightbox';
+import { handleLeftClick } from '../../../../utils';
 
 const resizeHandlers = new Map();
 
@@ -64,15 +65,14 @@ export function useLightboxItems(attachments, postId) {
 }
 
 export function useItemClickHandler(lightboxItems) {
-  return useEvent((e) => {
-    if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
-      return;
-    }
-    e.preventDefault();
-    const { currentTarget: el } = e;
-    const index = lightboxItems.findIndex((i) => i.pid === el.dataset.pid);
-    openLightbox(index, lightboxItems, el.target);
-  });
+  return useEvent(
+    handleLeftClick((e) => {
+      e.preventDefault();
+      const { currentTarget: el } = e;
+      const index = lightboxItems.findIndex((i) => i.pid === el.dataset.pid);
+      openLightbox(index, lightboxItems, el.target);
+    }),
+  );
 }
 
 // Prevent video from playing infinitely (we has this situation once and don't

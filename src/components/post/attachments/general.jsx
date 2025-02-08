@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import { useEvent } from 'react-use-event-hook';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
-import { formatFileSize } from '../../../utils';
+import { formatFileSize, handleLeftClick } from '../../../utils';
 import style from './attachments.module.scss';
 import { OriginalLink } from './original-link';
 import { LikeAVideo } from './like-a-video';
@@ -28,15 +28,14 @@ const supportedVideoTypes = [];
 export function GeneralAttachment({ attachment: att, removeAttachment }) {
   const { inProgress = false } = att.meta ?? {};
 
-  const handleClick = useEvent((e) => {
-    if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
-      return;
-    }
-    if (this.props.meta?.inProgress) {
-      e.preventDefault();
-      alert('This file is still being processed');
-    }
-  });
+  const handleClick = useEvent(
+    handleLeftClick((e) => {
+      if (this.props.meta?.inProgress) {
+        e.preventDefault();
+        alert('This file is still being processed');
+      }
+    }),
+  );
 
   const nameAndSize = `${att.fileName} (${inProgress ? 'processing...' : formatFileSize(att.fileSize)})`;
 

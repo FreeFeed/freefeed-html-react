@@ -1,6 +1,7 @@
 import { useCallback, useRef } from 'react';
 import { noop } from 'lodash-es';
 import { openLightbox } from '../../services/lightbox';
+import { handleLeftClick } from '../../utils';
 import { mediaLinksContext as ctx, createErrorItem, createLightboxItem, stubItem } from './helpers';
 
 export function MediaLinksProvider({ children }) {
@@ -14,10 +15,10 @@ export function MediaLinksProvider({ children }) {
     createLightboxItem(url, mediaType)
       .then((item) => (lightboxItems.current[index] = item))
       .catch((err) => (lightboxItems.current[index] = createErrorItem(err)));
-    return (e) => {
+    return handleLeftClick((e) => {
       e.preventDefault();
       openLightbox(index, lightboxItems.current);
-    };
+    });
   }, []);
 
   return <ctx.Provider value={registerLink}>{children}</ctx.Provider>;
