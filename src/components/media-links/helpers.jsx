@@ -5,11 +5,13 @@ import {
   canShowURL as isInstagram,
   getEmbedInfo as getInstagramEmbedInfo,
 } from '../link-preview/instagram';
-import { getVideoInfo, getVideoType, T_YOUTUBE_VIDEO } from '../link-preview/video';
+import { getVideoInfo, getVideoType, T_VIMEO_VIDEO, T_YOUTUBE_VIDEO } from '../link-preview/video';
 import { isLeftClick } from '../../utils';
 import { openLightbox } from '../../services/lightbox';
 import { attachmentPreviewUrl } from '../../services/api';
 import { getAttachmentInfo } from '../../services/batch-attachments-info';
+import { pauseYoutubeVideo, playYoutubeVideo } from './youtube-api';
+import { pauseVimeoVideo, playVimeoVideo } from './vimeo-api';
 
 export const mediaLinksContext = createContext([]);
 
@@ -90,7 +92,7 @@ export function createErrorItem(error) {
 const freefeedAttachmentRegex =
   /ht{2}ps:\/{2}[\w-]*media\.freefeed\.net\/attachments\/(?:\w+\/)?([\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12})/;
 
-export async function createLightboxItem(url, mediaType) {
+async function createLightboxItem(url) {
   const [, attId] = freefeedAttachmentRegex.exec(url) ?? [];
   if (attId) {
     // Freefeed attachment
@@ -100,11 +102,7 @@ export async function createLightboxItem(url, mediaType) {
     }
     if (att.meta?.inProgress) {
       // Retry after 5 seconds
-      return new Promise((resolve) =>
-        setTimeout(() => {
-          resolve(createLightboxItem(url, mediaType));
-        }, 5000),
-      );
+      return new Promise((resolve) => setTimeout(() => resolve(createLightboxItem(url)), 5000));
     } else if (att.mediaType === 'image') {
       return {
         type: IMAGE,
@@ -130,6 +128,7 @@ export async function createLightboxItem(url, mediaType) {
     return null;
   }
 
+  const mediaType = getMediaType(url);
   switch (mediaType) {
     case IMAGE:
       return {
@@ -161,7 +160,7 @@ async function getEmbeddableItem(url, mediaType) {
   if (isInstagram(url)) {
     info = getInstagramEmbedInfo(url);
   } else {
-    info = await getVideoInfo(url);
+    info = await getVideoInfo(url, true);
   }
 
   if (!info) {
@@ -227,20 +226,12 @@ async function getEmbeddableItem(url, mediaType) {
     onDeactivate = (element) => element.querySelector('video').pause();
   }
   if (mediaType === T_YOUTUBE_VIDEO) {
-    onActivate = function (element) {
-      const iframe = element.querySelector('iframe');
-      iframe.contentWindow?.postMessage(
-        JSON.stringify({ event: 'command', func: 'playVideo' }),
-        'https://www.youtube.com',
-      );
-    };
-    onDeactivate = function (element) {
-      const iframe = element.querySelector('iframe');
-      iframe.contentWindow?.postMessage(
-        JSON.stringify({ event: 'command', func: 'pauseVideo' }),
-        'https://www.youtube.com',
-      );
-    };
+    onActivate = (element) => playYoutubeVideo(element.querySelector('iframe'));
+    onDeactivate = (element) => pauseYoutubeVideo(element.querySelector('iframe'));
+  }
+  if (mediaType === T_VIMEO_VIDEO) {
+    onActivate = (element) => playVimeoVideo(element.querySelector('iframe'));
+    onDeactivate = (element) => pauseVimeoVideo(element.querySelector('iframe'));
   }
 
   let text = info.byline;

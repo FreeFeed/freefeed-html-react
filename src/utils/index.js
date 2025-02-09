@@ -114,7 +114,7 @@ export function isLeftClick(event) {
 
 export function handleLeftClick(handler) {
   return (event, ...rest) => {
-    if (isLeftClick(event)) {
+    if (!isLeftClick(event)) {
       return;
     }
     event.preventDefault();
