@@ -1,3 +1,4 @@
+/* global CONFIG */
 import { renderToString } from 'react-dom/server';
 import { createContext, useContext, useMemo, useState } from 'react';
 import { useEvent } from 'react-use-event-hook';
@@ -42,7 +43,20 @@ export function useMediaLink(url) {
       return;
     }
     e.preventDefault();
-    openLightbox(index, items);
+
+    // Remove empty items and modify index
+    const nonEmptyItems = [];
+    let newIndex = 0;
+    for (const [i, item] of items.entries()) {
+      if (item) {
+        nonEmptyItems.push(item);
+        if (i === index) {
+          newIndex = nonEmptyItems.length - 1;
+        }
+      }
+    }
+
+    openLightbox(newIndex, nonEmptyItems);
   });
   return [mediaType, handleClick];
 }
@@ -89,11 +103,23 @@ export function createErrorItem(error) {
   };
 }
 
-const freefeedAttachmentRegex =
-  /ht{2}ps:\/{2}[\w-]*media\.freefeed\.net\/attachments\/(?:\w+\/)?([\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12})/;
+const freefeedPathRegex = /^\/attachments\/(?:\w+\/)?([\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12})/;
+
+function freefeedAttachmentId(url) {
+  try {
+    const urlObj = new URL(url);
+    if (!CONFIG.attachmentDomains.includes(urlObj.hostname)) {
+      return null;
+    }
+    const [, id] = freefeedPathRegex.exec(urlObj.pathname) ?? [null, null];
+    return id;
+  } catch {
+    return null;
+  }
+}
 
 async function createLightboxItem(url) {
-  const [, attId] = freefeedAttachmentRegex.exec(url) ?? [];
+  const attId = freefeedAttachmentId(url);
   if (attId) {
     // Freefeed attachment
     const att = await getAttachmentInfo(attId);
@@ -129,6 +155,9 @@ async function createLightboxItem(url) {
   }
 
   const mediaType = getMediaType(url);
+  if (!mediaType) {
+    return null;
+  }
   switch (mediaType) {
     case IMAGE:
       return {

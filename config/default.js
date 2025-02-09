@@ -32,6 +32,9 @@ export default {
     'gamma.freefeed.net',
   ],
 
+  // For links in texts
+  attachmentDomains: ['stable-media.freefeed.net'],
+
   textFormatter: {
     tldList: TLDs,
     /**
