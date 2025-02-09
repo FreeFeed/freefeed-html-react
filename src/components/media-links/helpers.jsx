@@ -1,19 +1,48 @@
 import { renderToString } from 'react-dom/server';
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
+import { useEvent } from 'react-use-event-hook';
 import {
   canShowURL as isInstagram,
   getEmbedInfo as getInstagramEmbedInfo,
 } from '../link-preview/instagram';
 import { getVideoInfo, getVideoType, T_YOUTUBE_VIDEO } from '../link-preview/video';
+import { isLeftClick } from '../../utils';
+import { openLightbox } from '../../services/lightbox';
+import { attachmentPreviewUrl } from '../../services/api';
+import { getAttachmentInfo } from '../../services/batch-attachments-info';
 
-export const mediaLinksContext = createContext(() => () => {});
+export const mediaLinksContext = createContext([]);
 
 export function useMediaLink(url) {
-  const registerLink = useContext(mediaLinksContext);
-  const mediaType = useMemo(() => getMediaType(url), [url]);
-  // Register link on component mount
-  const openLink = useMemo(() => registerLink(url, mediaType), [mediaType, registerLink, url]);
-  return [mediaType, openLink];
+  const items = useContext(mediaLinksContext);
+  const [mediaType, setMediaType] = useState(() => getMediaType(url));
+  const index = useMemo(() => {
+    const index = items.length;
+    items.push(stubItem);
+    createLightboxItem(url)
+      .then((item) => {
+        if (!item) {
+          setMediaType(null);
+        } else if (item.mediaType) {
+          setMediaType(item.mediaType);
+        }
+        items[index] = item;
+        return null;
+      })
+      .catch((err) => (items[index] = createErrorItem(err)));
+    return index;
+    // Items are reference-immutable, url is truly immutable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleClick = useEvent((e) => {
+    if (!mediaType || !isLeftClick(e)) {
+      return;
+    }
+    e.preventDefault();
+    openLightbox(index, items);
+  });
+  return [mediaType, handleClick];
 }
 
 export const IMAGE = 'image';
@@ -58,7 +87,49 @@ export function createErrorItem(error) {
   };
 }
 
+const freefeedAttachmentRegex =
+  /ht{2}ps:\/{2}[\w-]*media\.freefeed\.net\/attachments\/(?:\w+\/)?([\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12})/;
+
 export async function createLightboxItem(url, mediaType) {
+  const [, attId] = freefeedAttachmentRegex.exec(url) ?? [];
+  if (attId) {
+    // Freefeed attachment
+    const att = await getAttachmentInfo(attId);
+    if (!att) {
+      return null;
+    }
+    if (att.meta?.inProgress) {
+      // Retry after 5 seconds
+      return new Promise((resolve) =>
+        setTimeout(() => {
+          resolve(createLightboxItem(url, mediaType));
+        }, 5000),
+      );
+    } else if (att.mediaType === 'image') {
+      return {
+        type: IMAGE,
+        mediaType: 'image',
+        src: attachmentPreviewUrl(att.id, 'image'),
+        originalSrc: attachmentPreviewUrl(att.id, 'original'),
+        width: att.previewWidth ?? att.width,
+        height: att.previewHeight ?? att.height,
+      };
+    } else if (att.mediaType === 'video') {
+      return {
+        type: VIDEO,
+        mediaType: 'video',
+        videoSrc: attachmentPreviewUrl(att.id, 'video'),
+        msrc: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>',
+        originalSrc: attachmentPreviewUrl(att.id, 'original'),
+        width: att.previewWidth ?? att.width,
+        height: att.previewHeight ?? att.height,
+        meta: att.meta ?? {},
+        duration: att.duration ?? 0,
+      };
+    }
+    return null;
+  }
+
   switch (mediaType) {
     case IMAGE:
       return {

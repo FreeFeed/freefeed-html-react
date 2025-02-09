@@ -784,6 +784,10 @@ export function getAttachmentInfo({ attId }) {
   return fetch(`${apiPrefix}/attachments/${attId}`, getRequestOptions());
 }
 
+export function getAttachmentsInfo(ids) {
+  return fetch(`${apiPrefix}/attachments/byIds`, postRequestOptions('POST', { ids }));
+}
+
 export function attachmentPreviewUrl(attId, type, width = null, height = null, redirect = true) {
   const url = new URL(`${apiPrefix}/attachments/${attId}/${type}`);
   if (redirect) {

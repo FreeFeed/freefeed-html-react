@@ -101,12 +101,20 @@ export function preventDefault(realFunction) {
   };
 }
 
+export function isLeftClick(event) {
+  return (
+    event.type === 'click' &&
+    event.button === 0 &&
+    !event.altKey &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.shiftKey
+  );
+}
+
 export function handleLeftClick(handler) {
   return (event, ...rest) => {
-    if (
-      event.type === 'click' &&
-      (event.button !== 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
-    ) {
+    if (isLeftClick(event)) {
       return;
     }
     event.preventDefault();
