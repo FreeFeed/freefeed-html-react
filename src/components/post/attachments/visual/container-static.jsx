@@ -14,6 +14,7 @@ import {
   getGallerySizes,
   maxPreviewAspectRatio,
   singleImageMaxHeight,
+  singleImageMinThumbArea,
   singleImageThumbArea,
   thumbArea,
 } from './geometry';
@@ -37,11 +38,16 @@ export function VisualContainerStatic({
   );
 
   const singleImage = attachments.length === 1;
+  const singleImageArea = clamp(
+    attachments[0].width * attachments[0].height,
+    singleImageMinThumbArea,
+    singleImageThumbArea,
+  );
 
   const sizeRows = getGallerySizes(
     ratios,
     containerWidth,
-    singleImage ? singleImageThumbArea : thumbArea,
+    singleImage ? singleImageArea : thumbArea,
     galleryGap,
   );
 

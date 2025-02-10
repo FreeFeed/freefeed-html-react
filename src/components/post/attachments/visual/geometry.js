@@ -9,6 +9,7 @@ export const galleryGap = 8;
 
 export const thumbArea = 210 ** 2; // px^2
 export const singleImageThumbArea = 300 ** 2; // px^2
+export const singleImageMinThumbArea = 100 ** 2; // px^2
 export const singleImageMaxHeight = 400;
 
 export function fitIntoBox(att, boxWidth, boxHeight, upscale = false) {
