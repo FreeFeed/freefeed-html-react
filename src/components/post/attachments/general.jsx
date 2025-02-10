@@ -1,7 +1,6 @@
 import cn from 'classnames';
-import { useEvent } from 'react-use-event-hook';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
-import { formatFileSize, handleLeftClick } from '../../../utils';
+import { formatFileSize } from '../../../utils';
 import style from './attachments.module.scss';
 import { OriginalLink } from './original-link';
 import { LikeAVideo } from './like-a-video';
@@ -26,19 +25,7 @@ const supportedVideoTypes = [];
 }
 
 export function GeneralAttachment({ attachment: att, removeAttachment }) {
-  const { inProgress = false } = att.meta ?? {};
-
-  const handleClick = useEvent(
-    handleLeftClick((e) => {
-      if (this.props.meta?.inProgress) {
-        e.preventDefault();
-        alert('This file is still being processed');
-      }
-    }),
-  );
-
-  const nameAndSize = `${att.fileName} (${inProgress ? 'processing...' : formatFileSize(att.fileSize)})`;
-
+  const nameAndSize = `${att.fileName} (${formatFileSize(att.fileSize)})`;
   const extension = att.fileName.split('.').pop().toLowerCase();
 
   return (
@@ -48,12 +35,7 @@ export function GeneralAttachment({ attachment: att, removeAttachment }) {
       className={cn(style['attachment'], style['attachment--general'])}
     >
       {supportedVideoTypes.includes(extension) && <LikeAVideo attachment={att} />}
-      <OriginalLink
-        attachment={att}
-        icon={faPaperclip}
-        onClick={handleClick}
-        removeAttachment={removeAttachment}
-      />
+      <OriginalLink attachment={att} icon={faPaperclip} removeAttachment={removeAttachment} />
     </div>
   );
 }
