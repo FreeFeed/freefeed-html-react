@@ -1,6 +1,6 @@
 {
   "name": "reactive-pepyatka",
-  "version": "1.136.4",
+  "version": "1.137.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
@@ -27,6 +27,7 @@
     "memoize-one": "~6.0.0",
     "mousetrap": "~1.6.5",
     "photoswipe": "~5.4.4",
+    "photoswipe-video-plugin": "~1.0.2",
     "porter-stemmer": "~0.9.1",
     "prop-types": "~15.8.1",
     "react": "~18.3.1",

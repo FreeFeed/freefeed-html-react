@@ -20,10 +20,10 @@ import {
 } from '../utils/parse-text';
 import { INITIAL_CHECKBOX, isChecked } from '../utils/initial-checkbox';
 import UserName from './user-name';
-import { MediaOpener, getMediaType } from './media-opener';
 import { InitialCheckbox } from './initial-checkbox';
 import { Anchor, Link } from './linkify-links';
 import CodeBlock from './code-block';
+import { MediaLink } from './media-links/media-link';
 
 const { searchEngine } = CONFIG.search;
 const MAX_URL_LENGTH = 50;
@@ -89,7 +89,7 @@ export function tokenToElement(token, key, params) {
     }
 
     case LINK:
-      return renderLink(token, key, params);
+      return renderLink(token, key);
 
     case SHORT_LINK:
       return (
@@ -159,7 +159,7 @@ export function tokenToElement(token, key, params) {
   return token.text;
 }
 
-function renderLink(token, key, params) {
+function renderLink(token, key) {
   const href = linkHref(token.text);
 
   if (isLocalLink(token.text)) {
@@ -188,23 +188,9 @@ function renderLink(token, key, params) {
     );
   }
 
-  const mediaType = getMediaType(href);
-  if (mediaType) {
-    return (
-      <MediaOpener
-        key={key}
-        url={href}
-        mediaType={mediaType}
-        attachmentsRef={params.attachmentsRef}
-      >
-        {prettyLink(token.text, MAX_URL_LENGTH)}
-      </MediaOpener>
-    );
-  }
-
   return (
-    <Anchor key={key} href={href}>
+    <MediaLink key={key} href={href}>
       {prettyLink(token.text, MAX_URL_LENGTH)}
-    </Anchor>
+    </MediaLink>
   );
 }

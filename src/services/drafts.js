@@ -2,7 +2,7 @@
 /* global CONFIG */
 import storage from 'local-storage-fallback';
 import { isEqual, omit } from 'lodash-es';
-import { setAttachment } from '../redux/action-creators';
+import { getAttachmentInfo, setAttachment } from '../redux/action-creators';
 import { setDelayedAction } from './drafts-throttling';
 import { EventEmitter } from './drafts-events';
 
@@ -207,7 +207,7 @@ export function initializeDrafts(store) {
 
   // Put found files to the redux store
   for (const file of allFiles.values()) {
-    store.dispatch(setAttachment(file));
+    store.dispatch(getAttachmentInfo(file.id));
   }
 
   // Subscribe to the storage events

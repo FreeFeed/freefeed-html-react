@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Experimental
 
+## [1.137.0] - Not released
+### Fixed
+- File uploader now properly displays the upload progress.
+
 ## [1.136.3] - 2025-01-05
 ### Changed
 - We now use the our own CORS proxy when showing the link previews for Coub,

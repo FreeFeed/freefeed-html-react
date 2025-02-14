@@ -1,0 +1,84 @@
+@import '../../../../styles/helvetica/dark-vars.scss';
+
+.attachments a {
+  color: #000088;
+  text-decoration: none;
+
+  &:hover .original-link__text {
+    text-decoration: underline;
+  }
+}
+
+.container {
+  margin-bottom: 1em;
+}
+
+.attachment {
+  margin-bottom: 0.5em;
+}
+
+.attachment--audio {
+  margin-bottom: 1em;
+}
+
+.audio__player {
+  width: 100%;
+}
+
+.original-link__container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.original-link__icon {
+  opacity: 0.75;
+  flex: none;
+  color: initial;
+  margin-top: 0.2em;
+}
+
+.original-link__text {
+  word-break: break-word;
+}
+
+.original-link__size {
+  color: initial;
+  opacity: 0.5;
+}
+
+.original-link__remove {
+  flex: none;
+  color: #fff;
+  background-color: #333;
+  border: none;
+  display: flex;
+  cursor: pointer;
+  padding: 0.2em;
+  font-size: 1.2em;
+  border-radius: 0.35em;
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+}
+
+.like-a-video {
+  margin-bottom: 0.5em;
+}
+
+.like-a-video__button {
+  border: none;
+  display: flex;
+  width: 3em;
+  height: 3em;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px;
+  background-color: rgba(128, 128, 128, 0.2);
+  font-size: 2em;
+}
+
+.like-a-video__player {
+  max-width: 100%;
+  width: 400px;
+  height: auto;
+  background-color: #eee;
+}

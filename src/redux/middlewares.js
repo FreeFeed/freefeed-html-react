@@ -733,6 +733,8 @@ const bindHandlers = (store) => ({
     }),
   'global:user:update': (data) =>
     store.dispatch({ type: ActionTypes.REALTIME_GLOBAL_USER_UPDATE, user: data.user }),
+  'attachment:update': (data) =>
+    store.dispatch({ ...data, type: ActionTypes.REALTIME_ATTACHMENT_UPDATE }),
 });
 
 export const realtimeMiddleware = (store) => {

@@ -20,7 +20,6 @@ import { Throbber } from './throbber';
 import { useFileChooser } from './uploader/file-chooser';
 import { useUploader } from './uploader/uploader';
 import { UploadProgress } from './uploader/progress';
-import PostAttachments from './post/post-attachments';
 import { useBool } from './hooks/bool';
 import { useServerValue } from './hooks/server-info';
 import { Selector } from './feeds-selector/selector';
@@ -29,6 +28,7 @@ import { CommaAndSeparated } from './separated';
 import { usePrivacyCheck } from './feeds-selector/privacy-check';
 import { PreventPageLeaving } from './prevent-page-leaving';
 import { Autocomplete } from './autocomplete/autocomplete';
+import { Attachments } from './post/attachments/attachments';
 
 const selectMaxFilesCount = (serverInfo) => serverInfo.attachments.maxCountPerPost;
 const selectMaxPostLength = (serverInfo) => serverInfo.maxTextLength.post;
@@ -316,7 +316,7 @@ export default function CreatePost({ sendTo, isDirects }) {
         )}
 
         <UploadProgress {...uploadProgressProps} />
-        <PostAttachments {...postAttachmentsProps} />
+        <Attachments {...postAttachmentsProps} />
       </ErrorBoundary>
     </div>
   );

@@ -1,12 +1,14 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable unicorn/prefer-query-selector */
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
+import PhotoSwipeVideoPlugin from 'photoswipe-video-plugin';
 import Mousetrap from 'mousetrap';
 import pswpModule from 'photoswipe';
 import 'photoswipe/photoswipe.css';
 import '../../styles/shared/lighbox.scss';
 import { getFullscreenAPI } from '../utils/fullscreen';
 import { pinnedElements, unscrollTo } from './unscroll';
+import { handlePip } from './pip-video';
 
 const prevHotKeys = ['a', 'ф', 'h', 'р', '4'];
 const nextHotKeys = ['d', 'в', 'k', 'л', '6'];
@@ -29,6 +31,13 @@ const fullscreenIconsHtml = `<svg aria-hidden="true" class="pswp__icn" viewBox="
 <path d="M11.213 8v3.213H8v2.834h6.047V8zm6.74 0v6.047H24v-2.834h-3.213V8zM8 17.953v2.834h3.213V24h2.834v-6.047h-2.834zm9.953 0V24h2.834v-3.213H24v-2.834h-3.213z" id="pswp__icn-fullscreen-close"/>
 </svg>`;
 
+const downloadIconHtml = {
+  isCustomSVG: true,
+  inner:
+    '<path d="M20.5 14.3 17.1 18V10h-2.2v7.9l-3.4-3.6L10 16l6 6.1 6-6.1ZM23 23H9v2h14Z" id="pswp__icn-download"/>',
+  outlineID: 'pswp__icn-download',
+};
+
 function initLightbox() {
   const lightbox = new PhotoSwipeLightbox({
     clickToCloseNonZoomable: false,
@@ -45,6 +54,8 @@ function initLightbox() {
     maxZoomLevel: 2,
     pswpModule,
   });
+
+  new PhotoSwipeVideoPlugin(lightbox, {});
 
   // Add fullscreen button
   lightbox.on('uiRegister', () => {
@@ -63,6 +74,28 @@ function initLightbox() {
         } else {
           fsApi.request(lightbox.pswp.element);
         }
+      },
+    });
+
+    lightbox.pswp.ui.registerElement({
+      name: 'download-button',
+      order: 10,
+      isButton: true,
+      tagName: 'a',
+      html: downloadIconHtml,
+      onInit: (el, pswp) => {
+        el.setAttribute('download', ''); // Does not work for cross-origin links:(
+        el.setAttribute('target', '_blank');
+        el.setAttribute('rel', 'noopener');
+
+        pswp.on('change', () => {
+          if (pswp.currSlide.data.originalSrc) {
+            el.href = pswp.currSlide.data.originalSrc;
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
       },
     });
 
@@ -126,19 +159,6 @@ function initLightbox() {
     Mousetrap.unbind(fullScreenHotKeys);
   });
 
-  // Fix dimensions for images without known width/height
-  lightbox.on('contentLoadImage', ({ content }) => {
-    const { data, index } = content;
-    if (data.autoSize) {
-      delete data.autoSize;
-      whenImageAndPswpLoaded(data.src, lightbox, (image, pswp) => {
-        data.width = image.width;
-        data.height = image.height;
-        pswp.refreshSlideContent(index);
-      });
-    }
-  });
-
   // Mount/unmount HTML content. This content can contain interactive players,
   // so for reliable playback stopping we need to unmount it when the slide
   // deactivates.
@@ -164,6 +184,51 @@ function initLightbox() {
     setTimeout(() => window.removeEventListener('scroll', h, { once: true }), 500);
   });
 
+  // Fix dimensions of media without known width/height
+  lightbox.on('contentLoad', ({ content }) => {
+    const { data, index } = content;
+    if (!data.autoSize) {
+      return;
+    }
+    if (data.type === 'image') {
+      whenImageAndPswpLoaded(data.src, lightbox, (image, pswp) => {
+        delete data.autoSize;
+        data.width = image.width;
+        data.height = image.height;
+        pswp.refreshSlideContent(index);
+      });
+    } else if (data.type === 'video') {
+      whenVideoAndPswpLoaded(content.element, lightbox, (video, pswp) => {
+        delete data.autoSize;
+        data.width = video.videoWidth;
+        data.height = video.videoHeight;
+        pswp.refreshSlideContent(index);
+      });
+    }
+  });
+
+  // Show animated images as a looped video without controls
+  lightbox.on('contentLoad', (e) => {
+    const { data, element } = e.content;
+    if (data.meta?.inProgress) {
+      e.preventDefault();
+      e.content.element = document.createElement('div');
+      e.content.element.classList.add('pswp__processing-indicator');
+      e.content.element.textContent = 'Processing media...';
+      return;
+    }
+    if (data.type === 'video') {
+      handlePip(element);
+      if (data.meta.animatedImage || (data.meta.silent && data.duration <= 5)) {
+        element.muted = true;
+        element.loop = true;
+        element.controls = false;
+      } else if (data.meta.silent) {
+        element.muted = true;
+      }
+    }
+  });
+
   // Init
   lightbox.init();
   return lightbox;
@@ -182,7 +247,7 @@ function whenImageAndPswpLoaded(src, lightbox, action) {
 }
 
 /**
- * Image has not "metadataloaded" event, and the "load" event fires only when
+ * Image has not "loadedmetadata" event, and the "load" event fires only when
  * the whole image is loaded. So, to obtain the image dimensions faster, we need
  * to periodically check if the image.width is defined (not zero). When it is,
  * we have the image dimensions, even if the whole image is not loaded yet.
@@ -197,4 +262,22 @@ function whenImageLoaded(image, action) {
   } else {
     setTimeout(() => whenImageLoaded(image, action), interval);
   }
+}
+
+function whenVideoLoaded(video, action) {
+  if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+    action();
+  } else {
+    video.addEventListener('loadedmetadata', () => action(), { once: true });
+  }
+}
+
+function whenVideoAndPswpLoaded(video, lightbox, action) {
+  whenVideoLoaded(video, () => {
+    if (lightbox.pswp) {
+      action(video, lightbox.pswp);
+    } else {
+      lightbox.on('afterInit', () => action(video, lightbox.pswp));
+    }
+  });
 }

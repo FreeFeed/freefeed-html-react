@@ -8,177 +8,208 @@ exports[`PostAttachments > Displays all post attachment types 1`] = `
     role="region"
   >
     <div
-      class="image-attachments is-folded"
+      style="--gap: 8px;"
     >
       <div
-        class="attachment"
-        data-id="im1"
-        role="figure"
+        class="container container--visual"
       >
-        <a
-          class="image-attachment-link"
-          href="https://media/CAT.JPG"
-          target="_blank"
-          title="CAT.JPG (195.3 KiB, 2000×1500px)"
+        <div
+          class="row row--stretched"
         >
-          <img
-            alt="Image attachment CAT.JPG"
-            class="image-attachment-img"
-            height="300"
-            id="new-post-im1"
-            loading="lazy"
-            src="https://thumbnail/CAT.JPG"
-            width="400"
-          />
-        </a>
-      </div>
-      <div
-        class="attachment"
-        data-id="im2"
-        role="figure"
-      >
-        <a
-          class="image-attachment-link"
-          href="https://media/food.jpg"
-          target="_blank"
-          title="food.jpg (2 KiB, 2000×1500px)"
-        >
-          <img
-            alt="Image attachment food.jpg"
-            class="image-attachment-img"
-            height="1500"
-            id="new-post-im2"
-            loading="lazy"
-            src="https://thumbnail/food.jpg"
-            width="2000"
-          />
-        </a>
-      </div>
-      <div
-        class="show-more"
-      >
-        <svg
-          aria-hidden="true"
-          class="show-more-icon fa-icon fa-icon-fas-chevron-circle-right"
-          focusable="false"
-          role="img"
-          viewBox="0 0 512 512"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <title>
-            Show more (1)
-          </title>
-          <path
-            d="M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z"
-            fill="currentColor"
-          />
-        </svg>
+          <a
+            class="link"
+            data-pid="new-post-vi1"
+            href="https://candy.freefeed.net/v4/attachments/vi1/original?redirect="
+            role="figure"
+            style="width: 337px; height: 190px;"
+            target="_blank"
+            title="sunrise.mp4 (117.7 MiB, 1920×1080px)"
+          >
+            <img
+              alt="Video attachment sunrise.mp4"
+              aria-hidden="true"
+              class="image"
+              height="190"
+              id="new-post-vi1"
+              loading="lazy"
+              src="https://candy.freefeed.net/v4/attachments/vi1/image?redirect=&width=337&height=190"
+              width="337"
+            />
+            <video
+              alt="Video attachment sunrise.mp4"
+              class="video"
+              disablepictureinpicture=""
+              height="190"
+              loading="lazy"
+              loop=""
+              playsinline=""
+              poster="https://candy.freefeed.net/v4/attachments/vi1/image?redirect=&width=337&height=190"
+              preload="none"
+              src="https://candy.freefeed.net/v4/attachments/vi1/video?redirect=&width=337&height=190"
+              width="337"
+            />
+            <div
+              class="overlay overlay--info"
+            >
+              <svg
+                aria-hidden="true"
+                class="fa-icon fa-icon-fas-play"
+                focusable="false"
+                role="img"
+                viewBox="0 0 448 512"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"
+                  fill="currentColor"
+                />
+              </svg>
+              2:03
+            </div>
+          </a>
+          <a
+            class="link"
+            data-pid="new-post-im1"
+            href="https://candy.freefeed.net/v4/attachments/im1/original?redirect="
+            role="figure"
+            style="width: 253px; height: 190px;"
+            target="_blank"
+            title="CAT.jpg (195.3 KiB, 2000×1500px)"
+          >
+            <img
+              alt="Image attachment CAT.jpg"
+              aria-hidden="false"
+              class="image"
+              height="190"
+              id="new-post-im1"
+              loading="lazy"
+              src="https://candy.freefeed.net/v4/attachments/im1/image?redirect=&width=253&height=190"
+              width="253"
+            />
+          </a>
+          <div
+            class="fold__box"
+          >
+            <button
+              class="fold__icon"
+              title="Show all (3)"
+            >
+              <svg
+                aria-hidden="true"
+                class="fa-icon fa-icon-fas-chevron-circle-right"
+                focusable="false"
+                role="img"
+                viewBox="0 0 512 512"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <div
-      class="audio-attachments"
+      class="container container--audio"
     >
       <div
         aria-label="Audio attachment Oasis – Wonderwall (1.2 MiB)"
-        class="attachment"
+        class="attachment attachment--audio"
         role="figure"
       >
-        <div>
-          <audio
-            controls=""
-            preload="none"
-            src="https://media/wonderwall.mp3"
-            title="Oasis – Wonderwall (1.2 MiB)"
-          />
+        <div
+          class="original-link__container"
+        >
+          <svg
+            aria-hidden="true"
+            class="original-link__icon fa-icon fa-icon-fas-headphones"
+            focusable="false"
+            role="img"
+            viewBox="0 0 512 512"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M256 32C114.52 32 0 146.496 0 288v48a32 32 0 0 0 17.689 28.622l14.383 7.191C34.083 431.903 83.421 480 144 480h24c13.255 0 24-10.745 24-24V280c0-13.255-10.745-24-24-24h-24c-31.342 0-59.671 12.879-80 33.627V288c0-105.869 86.131-192 192-192s192 86.131 192 192v1.627C427.671 268.879 399.342 256 368 256h-24c-13.255 0-24 10.745-24 24v176c0 13.255 10.745 24 24 24h24c60.579 0 109.917-48.098 111.928-108.187l14.382-7.191A32 32 0 0 0 512 336v-48c0-141.479-114.496-256-256-256z"
+              fill="currentColor"
+            />
+          </svg>
+          <div
+            class="original-link__text"
+          >
+            <a
+              class="original-link"
+              href="https://candy.freefeed.net/v4/attachments/au1/original?redirect="
+              target="_blank"
+            >
+              <span
+                class="original-link__text"
+              >
+                Oasis – Wonderwall
+              </span>
+               
+              <span
+                class="original-link__size"
+              >
+                1.2 MiB
+              </span>
+            </a>
+          </div>
         </div>
         <div>
-          <a
-            href="https://media/wonderwall.mp3"
-            target="_blank"
+          <audio
+            class="audio__player"
+            controls=""
+            preload="none"
+            src="https://candy.freefeed.net/v4/attachments/au1/audio?redirect="
             title="Oasis – Wonderwall (1.2 MiB)"
-          >
-            <svg
-              aria-hidden="true"
-              class="attachment-icon fa-icon fa-icon-far-file-audio"
-              focusable="false"
-              role="img"
-              viewBox="0 0 384 512"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M369.941 97.941l-83.882-83.882A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v416c0 26.51 21.49 48 48 48h288c26.51 0 48-21.49 48-48V131.882a48 48 0 0 0-14.059-33.941zM332.118 128H256V51.882L332.118 128zM48 464V48h160v104c0 13.255 10.745 24 24 24h104v288H48zm144-76.024c0 10.691-12.926 16.045-20.485 8.485L136 360.486h-28c-6.627 0-12-5.373-12-12v-56c0-6.627 5.373-12 12-12h28l35.515-36.947c7.56-7.56 20.485-2.206 20.485 8.485v135.952zm41.201-47.13c9.051-9.297 9.06-24.133.001-33.439-22.149-22.752 12.235-56.246 34.395-33.481 27.198 27.94 27.212 72.444.001 100.401-21.793 22.386-56.947-10.315-34.397-33.481z"
-                fill="currentColor"
-              />
-            </svg>
-            <span>
-              Oasis – Wonderwall (1.2 MiB)
-            </span>
-          </a>
+          />
         </div>
       </div>
     </div>
     <div
-      class="general-attachments"
+      class="container container--general"
     >
       <div
-        aria-label="Attachment sunrise.mp4 (117.7 MiB)"
-        class="attachment"
-        role="figure"
-      >
-        <a
-          href="https://media/sunrise.mp4"
-          target="_blank"
-          title="sunrise.mp4 (117.7 MiB)"
-        >
-          <svg
-            aria-hidden="true"
-            class="attachment-icon fa-icon fa-icon-far-file"
-            focusable="false"
-            role="img"
-            viewBox="0 0 384 512"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z"
-              fill="currentColor"
-            />
-          </svg>
-          <span
-            class="attachment-title"
-          >
-            sunrise.mp4 (117.7 MiB)
-          </span>
-        </a>
-      </div>
-      <div
         aria-label="Attachment rfc.pdf (48.8 KiB)"
-        class="attachment"
+        class="attachment attachment--general"
         role="figure"
       >
-        <a
-          href="https://media/rfc.pdf"
-          target="_blank"
-          title="rfc.pdf (48.8 KiB)"
+        <div
+          class="original-link__container"
         >
           <svg
-            aria-hidden="true"
-            class="attachment-icon fa-icon fa-icon-far-file"
-            focusable="false"
-            role="img"
-            viewBox="0 0 384 512"
+            class="original-link__icon fa-icon fa-icon-fas-paperclip"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z"
-              fill="currentColor"
+            <use
+              xlink:href="#fa-icon-fas-paperclip"
             />
           </svg>
-          <span
-            class="attachment-title"
+          <div
+            class="original-link__text"
           >
-            rfc.pdf (48.8 KiB)
-          </span>
-        </a>
+            <a
+              class="original-link"
+              href="https://candy.freefeed.net/v4/attachments/ge1/original?redirect="
+              target="_blank"
+            >
+              <span
+                class="original-link__text"
+              >
+                rfc.pdf
+              </span>
+               
+              <span
+                class="original-link__size"
+              >
+                48.8 KiB
+              </span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>

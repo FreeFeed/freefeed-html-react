@@ -39,7 +39,7 @@ function ProgressRow({ id, status, file }) {
       <div className={style.name}>{allUploads[id]?.name ?? 'File'}</div>
       <div
         className={style.progress}
-        style={{ width: `${(style.error ? 1 : status.progress) * 100}%` }}
+        style={{ width: `${(status.error ? 1 : status.progress) * 100}%` }}
       />
       {status.error && (
         <>
