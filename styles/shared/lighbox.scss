@@ -1,3 +1,15 @@
+html {
+  transition: background-color 333ms;
+
+  &.with-lightbox {
+    overflow-y: hidden;
+  }
+
+  &.with-lightbox-bg {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
 .pswp-media__container {
   display: flex;
   flex-direction: column;
