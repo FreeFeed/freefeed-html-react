@@ -1,3 +1,14 @@
+html:has(.pswp--open) {
+  // Disable scrolling while lightbox is open
+  overflow-y: hidden;
+
+  body {
+    // Compensate of the scrollbar width
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
+  }
+}
+
 .pswp-media__container {
   display: flex;
   flex-direction: column;

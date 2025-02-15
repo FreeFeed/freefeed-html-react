@@ -5,7 +5,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { attachmentPreviewUrl } from '../../../../services/api';
 import { formatFileSize } from '../../../../utils';
 import { Icon } from '../../../fontawesome-icons';
-import { useMediaQuery } from '../../../hooks/media-query';
+import { usePixelRatio } from '../../../hooks/pixel-ratio';
 import style from './visual.module.scss';
 import { NsfwCanvas } from './nsfw-canvas';
 import { fitIntoBox } from './geometry';
@@ -41,7 +41,7 @@ export function VisualAttachment({
     setPrvHeight(mediaHeight);
   }, [prvWidth, prvHeight, mediaWidth, mediaHeight]);
 
-  const hiDpi = useMediaQuery('(min-resolution: 1.5x)') ? 2 : 1;
+  const pixRatio = usePixelRatio();
 
   const handleMouseEnter = useEvent((e) => {
     e.target.play();
@@ -59,8 +59,8 @@ export function VisualAttachment({
     removeAttachment?.(att.id);
   });
 
-  const imageSrc = attachmentPreviewUrl(att.id, 'image', hiDpi * prvWidth, hiDpi * prvHeight);
-  const videoSrc = attachmentPreviewUrl(att.id, 'video', hiDpi * prvWidth, hiDpi * prvHeight);
+  const imageSrc = attachmentPreviewUrl(att.id, 'image', pixRatio * prvWidth, pixRatio * prvHeight);
+  const videoSrc = attachmentPreviewUrl(att.id, 'video', pixRatio * prvWidth, pixRatio * prvHeight);
 
   const videoRef = useRef(null);
   useStopVideo(videoRef, att.mediaType === 'video' && !att.meta?.inProgress);

@@ -147,16 +147,34 @@ function initLightbox() {
     }
   });
 
+  // Looking for video in active slide
+  let currentVideo = null;
+  lightbox.on('contentActivate', ({ content }) => {
+    currentVideo = content.element.matches('video')
+      ? content.element
+      : content.element.querySelector('video');
+  });
+  lightbox.on('contentDeactivate', () => {
+    currentVideo = null;
+  });
+
   // Handle keyboard navigation
   lightbox.on('beforeOpen', () => {
     Mousetrap.bind(prevHotKeys, () => lightbox.pswp.prev());
     Mousetrap.bind(nextHotKeys, () => lightbox.pswp.next());
     Mousetrap.bind(fullScreenHotKeys, () => document.querySelector('.pswp__button--fs')?.click());
+    Mousetrap.bind(['space'], () => {
+      // Toggle play/pause for active video
+      if (currentVideo) {
+        currentVideo.paused ? currentVideo.play() : currentVideo.pause();
+      }
+    });
   });
   lightbox.on('destroy', () => {
     Mousetrap.unbind(prevHotKeys);
     Mousetrap.unbind(nextHotKeys);
     Mousetrap.unbind(fullScreenHotKeys);
+    Mousetrap.unbind(['space']);
   });
 
   // Mount/unmount HTML content. This content can contain interactive players,
