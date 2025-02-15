@@ -23,6 +23,9 @@
   border-bottom: 2px solid var(--progress-bg);
   position: relative;
   margin-bottom: 0.33em;
+  display: flex;
+  align-items: flex-end;
+  gap: 1em;
 }
 
 .rowError {
@@ -49,13 +52,17 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  margin-right: 20px;
+  flex: 1;
+}
+
+.speed {
+  flex: none;
+  opacity: 0.8;
+  font-size: 0.9em;
 }
 
 .closeIcon {
-  position: absolute;
-  top: -4px;
-  right: 0;
+  flex: none;
   padding: 4px;
   display: flex;
   border-radius: 50%;
