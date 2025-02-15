@@ -44,11 +44,15 @@ export function VisualAttachment({
   const pixRatio = usePixelRatio();
 
   const handleMouseEnter = useEvent((e) => {
-    e.target.play();
+    if (window.matchMedia?.('(hover: hover)').matches) {
+      e.target.play();
+    }
   });
   const handleMouseLeave = useEvent((e) => {
-    e.target.pause();
-    e.target.currentTime = 0;
+    if (window.matchMedia?.('(hover: hover)').matches) {
+      e.target.pause();
+      e.target.currentTime = 0;
+    }
   });
   const [currentTime, setCurrentTime] = useState(0);
   const handleTimeUpdate = useEvent((e) => setCurrentTime(Math.floor(e.target.currentTime)));

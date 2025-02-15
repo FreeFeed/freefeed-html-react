@@ -17,6 +17,7 @@ export function attachmentUploads(state = defaultState, action) {
         [id]: {
           ...state[id],
           name: action.payload.name,
+          size: action.payload.size,
           attachment: null,
         },
       };

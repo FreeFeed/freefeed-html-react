@@ -1150,7 +1150,7 @@ export function createAttachment(uploadId, file) {
   return {
     type: ActionTypes.CREATE_ATTACHMENT,
     asyncOperation: Api.createAttachment,
-    payload: { uploadId, file, name: file.name },
+    payload: { uploadId, file, name: file.name, size: file.size },
   };
 }
 
