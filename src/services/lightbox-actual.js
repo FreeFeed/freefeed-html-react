@@ -158,12 +158,6 @@ function initLightbox() {
     currentVideo = null;
   });
 
-  // Disable scrolling while lightbox is open
-  const htmlCl = document.documentElement.classList;
-  lightbox.on('openingAnimationStart', () => htmlCl.add('with-lightbox', 'with-lightbox-bg'));
-  lightbox.on('closingAnimationStart', () => htmlCl.remove('with-lightbox-bg'));
-  lightbox.on('closingAnimationEnd', () => htmlCl.remove('with-lightbox'));
-
   // Handle keyboard navigation
   lightbox.on('beforeOpen', () => {
     Mousetrap.bind(prevHotKeys, () => lightbox.pswp.prev());

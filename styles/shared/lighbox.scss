@@ -1,12 +1,11 @@
-html {
-  transition: background-color 333ms;
+html:has(.pswp--open) {
+  // Disable scrolling while lightbox is open
+  overflow-y: hidden;
 
-  &.with-lightbox {
-    overflow-y: hidden;
-  }
-
-  &.with-lightbox-bg {
-    background-color: rgba(0, 0, 0, 0.8);
+  body {
+    // Compensate of the scrollbar width
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
   }
 }
 
