@@ -51,11 +51,11 @@ export function useUploader({
       return;
     }
     return subscribeToDrafts(() => {
-      const fileIds = getDraft(draftKey)?.fileIds ?? initialFileIds;
+      const fileIds = getDraft(draftKey)?.fileIds ?? givenFileIds;
       setInitialFileIds(fileIds);
       setFileIds(fileIds);
     });
-  }, [draftKey, initialFileIds]);
+  }, [draftKey, givenFileIds]);
 
   useEffect(() => {
     if (!draftKey || !updatedLocally.current) {
