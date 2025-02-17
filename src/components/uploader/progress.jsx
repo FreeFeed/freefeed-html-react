@@ -1,8 +1,8 @@
 import { filesize } from 'filesize';
 import cn from 'classnames';
-import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { faExclamationTriangle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { useEvent } from 'react-use-event-hook';
 import { createAttachment, resetAttachmentUpload } from '../../redux/action-creators';
 import { ButtonLink } from '../button-link';
 import { Icon } from '../fontawesome-icons';
@@ -30,8 +30,13 @@ function ProgressRow({ id, status, file }) {
   const allUploads = useSelector((state) => state.attachmentUploads);
   const upl = allUploads[id];
 
-  const remove = useCallback(() => dispatch(resetAttachmentUpload(id)), [dispatch, id]);
-  const retry = useCallback(() => dispatch(createAttachment(id, file)), [dispatch, id, file]);
+  const remove = useEvent(() => {
+    if (status.loading && !confirm('Are you sure you want to abort the upload?')) {
+      return;
+    }
+    dispatch(resetAttachmentUpload(id));
+  });
+  const retry = useEvent(() => dispatch(createAttachment(id, file)));
 
   const speed = useSpeed(status.progress * (upl?.size ?? 0));
 
@@ -52,13 +57,18 @@ function ProgressRow({ id, status, file }) {
               Retry
             </button>
           )}
-          <ButtonLink className={style.closeIcon} onClick={remove} data-id={id}>
-            <Icon icon={faTimesCircle} />
-          </ButtonLink>
         </>
       ) : (
         <div className={style.speed}>{filesize(speed, { bits: true })}/s</div>
       )}
+      <ButtonLink
+        className={style.closeIcon}
+        onClick={remove}
+        data-id={id}
+        title={status.error ? 'Remove' : 'Abort'}
+      >
+        <Icon icon={faTimesCircle} />
+      </ButtonLink>
       <div
         className={style.progress}
         style={{ width: `${(status.error ? 1 : status.progress) * 100}%` }}

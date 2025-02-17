@@ -48,7 +48,7 @@ import {
   cancelConcurrentRequest,
   isUserChangeResponse,
 } from './action-helpers';
-import { asyncPhase, RESPONSE_PHASE, progress } from './async-helpers';
+import { asyncPhase, RESPONSE_PHASE, progress, reset } from './async-helpers';
 
 export const feedViewOptionsMiddleware = (store) => (next) => (action) => {
   if (isFeedGeneratingAction(action)) {
@@ -122,6 +122,8 @@ export const asyncMiddleware = (store) => (next) => async (action) => {
     return;
   }
 
+  console.log('asyncMiddleware', action.type);
+
   store.dispatch({ ...action, type: request(action.type), asyncOperation: null });
   try {
     const result = await action.asyncOperation(action.payload, {
@@ -147,6 +149,46 @@ export const asyncMiddleware = (store) => (next) => async (action) => {
       extra: action.extra || {},
     });
   }
+};
+
+/**
+ * Middleware for aborting attachment uploads
+ */
+export const abortableUploadMiddleware = () => {
+  const abortControllers = new Map();
+
+  return (next) => (action) => {
+    if (action.type === ActionTypes.CREATE_ATTACHMENT) {
+      const { uploadId } = action.payload;
+      const ctr = new AbortController();
+      abortControllers.set(uploadId, ctr);
+      const { signal } = ctr;
+      return next({
+        ...action,
+        asyncOperation: async (params, options = {}) => {
+          try {
+            return await action.asyncOperation(params, { ...options, signal });
+          } finally {
+            abortControllers.delete(uploadId);
+          }
+        },
+      });
+    }
+    if (action.type === reset(ActionTypes.CREATE_ATTACHMENT)) {
+      const { uploadId } = action.payload;
+      abortControllers.get(uploadId)?.abort();
+      return next(action);
+    }
+    if (
+      action.type === fail(ActionTypes.CREATE_ATTACHMENT) &&
+      action.payload.err === 'Request aborted'
+    ) {
+      // User aborted the upload, threat it as reset
+      return next(ActionCreators.resetAttachmentUpload(action.request.uploadId));
+    }
+
+    return next(action);
+  };
 };
 
 /**

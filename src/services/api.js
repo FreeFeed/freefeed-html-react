@@ -730,7 +730,7 @@ export function resumeMe({ resumeToken }) {
   return fetch(`${apiPrefix}/users/resume-me`, postRequestOptions('POST', { resumeToken }));
 }
 
-export function createAttachment({ file, name }, { onProgress = () => null } = {}) {
+export function createAttachment({ file, name }, { onProgress = () => null, signal } = {}) {
   const formData = new FormData();
   formData.append('file', file, name);
   return new Promise((resolve, reject) => {
@@ -745,7 +745,9 @@ export function createAttachment({ file, name }, { onProgress = () => null } = {
       }
     };
     req.onerror = () => reject({ err: 'Network error' });
+    req.onabort = () => reject({ err: 'Request aborted' });
     req.upload.onprogress = (e) => onProgress(e.loaded / e.total);
+    signal?.addEventListener('abort', () => req.abort());
 
     req.open('POST', `${apiPrefix}/attachments`);
     req.responseType = 'json';
