@@ -24,7 +24,7 @@ import { ButtonLink } from '../button-link';
 import { usePrivacyCheck } from '../feeds-selector/privacy-check';
 import { doneEditingAndDeleteDraft, existingPostURI, getDraft } from '../../services/drafts';
 import { Autocomplete } from '../autocomplete/autocomplete';
-import PostAttachments from './post-attachments';
+import { Attachments } from './attachments/attachments';
 
 const selectMaxFilesCount = (serverInfo) => serverInfo.attachments.maxCountPerPost;
 const selectMaxPostLength = (serverInfo) => serverInfo.maxTextLength.post;
@@ -233,7 +233,7 @@ export function PostEditForm({ id, isDirect, recipients, createdBy, body, attach
         )}
 
         <UploadProgress {...uploadProgressProps} />
-        <PostAttachments {...postAttachmentsProps} postId={id} />
+        <Attachments {...postAttachmentsProps} postId={id} />
       </div>
     </>
   );

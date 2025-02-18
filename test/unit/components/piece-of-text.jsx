@@ -6,9 +6,9 @@ import PieceOfText from '../../../src/components/piece-of-text';
 import Spoiler from '../../../src/components/spoiler';
 import Linkify from '../../../src/components/linkify';
 import { ButtonLink } from '../../../src/components/button-link';
-import { Anchor } from '../../../src/components/linkify-links';
 import ErrorBoundary from '../../../src/components/error-boundary';
 import CodeBlock from '../../../src/components/code-block';
+import { MediaLink } from '../../../src/components/media-links/media-link';
 
 const expect = unexpected.clone().use(unexpectedReact);
 
@@ -102,7 +102,7 @@ describe('<PieceOfText>', () => {
           <Spoiler>456</Spoiler>
           {'</spoiler> 789 <спойлер>'}
           <Spoiler>
-            <Anchor href="https://example.com/">example.com</Anchor>
+            <MediaLink href="https://example.com/">example.com</MediaLink>
           </Spoiler>
           {'</спойлер> 123'}
         </ErrorBoundary>

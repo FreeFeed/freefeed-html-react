@@ -1,3 +1,14 @@
+html:has(.pswp--open) {
+  // Disable scrolling while lightbox is open
+  overflow-y: hidden;
+
+  body {
+    // Compensate of the scrollbar width
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
+  }
+}
+
 .pswp-media__container {
   display: flex;
   flex-direction: column;
@@ -5,6 +16,7 @@
   gap: 0.5rem;
   max-width: 100%;
   max-height: 100%;
+  color: white;
 }
 
 .pswp-media__container--error {
@@ -77,4 +89,11 @@
   #pswp__icn-fullscreen-open {
     display: none;
   }
+}
+
+.pswp__processing-indicator {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

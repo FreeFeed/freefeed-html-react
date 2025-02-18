@@ -657,38 +657,33 @@ export const postHideStatuses = asyncStatesMap(
 
 export function attachments(state = {}, action) {
   if (ActionHelpers.isFeedResponse(action)) {
-    return mergeByIds(state, action.payload.attachments, { insert: true, update: true });
+    return mergeByIds(state, action.payload.attachments, { update: true });
   }
   switch (action.type) {
     case response(ActionTypes.GET_SINGLE_POST):
     case response(ActionTypes.COMPLETE_POST_COMMENTS):
     case response(ActionTypes.CREATE_POST): {
-      return mergeByIds(state, action.payload.attachments);
+      return mergeByIds(state, action.payload.attachments, { update: true });
     }
     case ActionTypes.REALTIME_POST_NEW:
     case ActionTypes.REALTIME_POST_UPDATE: {
-      return mergeByIds(state, action.attachments);
+      return mergeByIds(state, action.attachments, { update: true });
     }
     case ActionTypes.REALTIME_COMMENT_NEW:
     case ActionTypes.REALTIME_LIKE_NEW: {
       if (action.post && action.post.attachments) {
-        return mergeByIds(state, action.post.attachments);
+        return mergeByIds(state, action.post.attachments, { update: true });
       }
       return state;
     }
+    case ActionTypes.REALTIME_ATTACHMENT_UPDATE: {
+      return mergeByIds(state, [action.attachments], { update: true });
+    }
     case response(ActionTypes.CREATE_ATTACHMENT):
+    case response(ActionTypes.GET_ATTACHMENT_INFO):
     case ActionTypes.SET_ATTACHMENT:
     case ActionTypes.ADD_ATTACHMENT_RESPONSE: {
-      const attObj = action.payload.attachments;
-      // Attachment objects don't change over time, so we don't need to update
-      // them.
-      if (state[attObj.id]) {
-        return state;
-      }
-      return {
-        ...state,
-        [attObj.id]: attObj,
-      };
+      return mergeByIds(state, [action.payload.attachments], { update: true });
     }
   }
   return state;

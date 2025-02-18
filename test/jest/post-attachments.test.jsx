@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import PostAttachments from '../../src/components/post/post-attachments';
+import { Attachments } from '../../src/components/post/attachments/attachments';
 
 function renderPostAttachments(attachments = []) {
   const state = { attachments: attachments.reduce((p, a) => ({ ...p, [a.id]: a }), {}) };
@@ -11,7 +11,7 @@ function renderPostAttachments(attachments = []) {
   const store = createStore(dummyReducer, state);
   return render(
     <Provider store={store}>
-      <PostAttachments attachmentIds={attachments.map((a) => a.id)} />
+      <Attachments attachmentIds={attachments.map((a) => a.id)} />
     </Provider>,
   );
 }
@@ -26,20 +26,11 @@ describe('PostAttachments', () => {
     const image1 = {
       id: 'im1',
       mediaType: 'image',
-      fileName: 'CAT.JPG',
+      fileName: 'CAT.jpg',
       fileSize: 200000,
-      thumbnailUrl: 'https://thumbnail/CAT.JPG',
-      url: 'https://media/CAT.JPG',
-      imageSizes: {
-        t: {
-          w: 400,
-          h: 300,
-        },
-        o: {
-          w: 2000,
-          h: 1500,
-        },
-      },
+      previewTypes: ['image'],
+      width: 2000,
+      height: 1500,
     };
 
     const image2 = {
@@ -47,32 +38,33 @@ describe('PostAttachments', () => {
       mediaType: 'image',
       fileName: 'food.jpg',
       fileSize: 2000,
-      thumbnailUrl: 'https://thumbnail/food.jpg',
-      url: 'https://media/food.jpg',
-      imageSizes: {
-        o: {
-          w: 2000,
-          h: 1500,
-        },
-      },
+      previewTypes: ['image'],
+      width: 2000,
+      height: 1500,
     };
 
     const video1 = {
       id: 'vi1',
-      mediaType: 'general',
+      mediaType: 'video',
       fileName: 'sunrise.mp4',
       fileSize: 123456789,
-      url: 'https://media/sunrise.mp4',
+      previewTypes: ['image', 'video'],
+      duration: 123,
+      width: 1920,
+      height: 1080,
     };
 
     const audio1 = {
       id: 'au1',
       mediaType: 'audio',
       fileName: 'wonderwall.mp3',
-      artist: 'Oasis',
-      title: 'Wonderwall',
       fileSize: 1234567,
-      url: 'https://media/wonderwall.mp3',
+      previewTypes: ['audio'],
+      duration: 300,
+      meta: {
+        'dc:creator': 'Oasis',
+        'dc:title': 'Wonderwall',
+      },
     };
 
     const general1 = {
@@ -80,7 +72,7 @@ describe('PostAttachments', () => {
       mediaType: 'general',
       fileName: 'rfc.pdf',
       fileSize: 50000,
-      url: 'https://media/rfc.pdf',
+      previewTypes: [],
     };
 
     const { asFragment } = renderPostAttachments([video1, image1, general1, image2, audio1]);

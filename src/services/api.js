@@ -730,7 +730,7 @@ export function resumeMe({ resumeToken }) {
   return fetch(`${apiPrefix}/users/resume-me`, postRequestOptions('POST', { resumeToken }));
 }
 
-export function createAttachment({ file, name }, { onProgress = () => null } = {}) {
+export function createAttachment({ file, name }, { onProgress = () => null, signal } = {}) {
   const formData = new FormData();
   formData.append('file', file, name);
   return new Promise((resolve, reject) => {
@@ -745,7 +745,9 @@ export function createAttachment({ file, name }, { onProgress = () => null } = {
       }
     };
     req.onerror = () => reject({ err: 'Network error' });
+    req.onabort = () => reject({ err: 'Request aborted' });
     req.upload.onprogress = (e) => onProgress(e.loaded / e.total);
+    signal?.addEventListener('abort', () => req.abort());
 
     req.open('POST', `${apiPrefix}/attachments`);
     req.responseType = 'json';
@@ -778,6 +780,26 @@ export function leaveDirect(postId) {
 
 export function getAttachmentsStats() {
   return fetch(`${apiPrefix}/attachments/my/stats`, getRequestOptions());
+}
+
+export function getAttachmentInfo({ attId }) {
+  return fetch(`${apiPrefix}/attachments/${attId}`, getRequestOptions());
+}
+
+export function getAttachmentsInfo(ids) {
+  return fetch(`${apiPrefix}/attachments/byIds`, postRequestOptions('POST', { ids }));
+}
+
+export function attachmentPreviewUrl(attId, type, width = null, height = null, redirect = true) {
+  const url = new URL(`${apiPrefix}/attachments/${attId}/${type}`);
+  if (redirect) {
+    url.searchParams.set('redirect', '');
+  }
+  if (width && height) {
+    url.searchParams.set('width', width);
+    url.searchParams.set('height', height);
+  }
+  return url.toString();
 }
 
 export function sanitizeMedia() {

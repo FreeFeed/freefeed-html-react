@@ -4,8 +4,10 @@ import cn from 'classnames';
 
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
+import { useEvent } from 'react-use-event-hook';
 import { initialAsyncState } from '../redux/async-helpers';
 import { doneEditingAndDeleteDraft, getDraft } from '../services/drafts';
+import { attachmentPreviewUrl } from '../services/api';
 import { Throbber } from './throbber';
 import { ButtonLink } from './button-link';
 import { Icon } from './fontawesome-icons';
@@ -96,9 +98,23 @@ export function CommentEditForm({
   }, [setInput, isAddingComment]);
 
   // Uploading files
-  const { isUploading, uploadFile, uploadProgressProps } = useUploader({
-    onSuccess: useCallback((att) => input.current?.insertText(att.url), []),
+  const onUpload = useEvent((att) => {
+    const inProgress = att.meta?.inProgress;
+    const previewType = inProgress || att.mediaType === 'general' ? 'original' : att.mediaType;
+    const url = attachmentPreviewUrl(att.id, previewType, null, null, false);
+    fetch(url)
+      .then((r) => r.json())
+      .then(({ url }) => {
+        if (inProgress) {
+          url = url.replace('.tmp', '.mp4');
+        }
+        input.current?.insertText(url);
+        return null;
+      })
+      .catch((e) => alert(`Upload error: ${e.message}`));
   });
+
+  const { isUploading, uploadFile, uploadProgressProps } = useUploader({ onSuccess: onUpload });
   const chooseFiles = useFileChooser(uploadFile, { multiple: true });
 
   const disabled = !canSubmit || submitStatus.loading || isUploading;

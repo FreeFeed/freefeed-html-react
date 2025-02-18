@@ -1150,7 +1150,7 @@ export function createAttachment(uploadId, file) {
   return {
     type: ActionTypes.CREATE_ATTACHMENT,
     asyncOperation: Api.createAttachment,
-    payload: { uploadId, file, name: file.name },
+    payload: { uploadId, file, name: file.name, size: file.size },
   };
 }
 
@@ -1259,6 +1259,15 @@ export function getAttachmentsStats() {
   return {
     type: ActionTypes.GET_ATTACHMENTS_STATS,
     apiRequest: Api.getAttachmentsStats,
+  };
+}
+
+export function getAttachmentInfo(attId) {
+  return {
+    type: ActionTypes.GET_ATTACHMENT_INFO,
+    apiRequest: Api.getAttachmentInfo,
+    nonAuthRequest: true,
+    payload: { attId },
   };
 }
 

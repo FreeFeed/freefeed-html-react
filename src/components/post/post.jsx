@@ -38,13 +38,13 @@ import { UnhideOptions, HideLink } from './post-hides-ui';
 import PostMoreLink from './post-more-link';
 import PostLikeLink from './post-like-link';
 import PostHeader from './post-header';
-import PostAttachments from './post-attachments';
 import PostComments from './post-comments';
 import PostLikes from './post-likes';
 import { PostContext } from './post-context';
 import { PostEditForm } from './post-edit-form';
 import { PostProvider } from './post-comment-provider';
 import { DraftIndicator } from './draft-indicator';
+import { Attachments } from './attachments/attachments';
 
 class Post extends Component {
   selectFeeds;
@@ -457,16 +457,13 @@ class Post extends Component {
               <>
                 {this.props.attachments.length > 0 && (
                   <div className="post-body" role="region" aria-label="Post attachments">
-                    <PostAttachments
+                    <Attachments
                       postId={props.id}
                       attachmentIds={this.props.attachments}
-                      isEditing={false}
                       isNSFW={props.isNSFW}
-                      isSinglePost={props.isSinglePost}
-                      removeAttachment={this.removeAttachment}
-                      reorderImageAttachments={this.reorderImageAttachments}
+                      isExpanded={props.isSinglePost}
                     />
-                    {!this.props.noImageAttachments && props.isNSFW && (
+                    {!this.props.noVisualAttachments && props.isNSFW && (
                       <div className="nsfw-bar">
                         Turn the <Link to="/settings/appearance#nsfw">NSFW filter</Link> off to
                         enable previews for sensitive content
@@ -475,7 +472,7 @@ class Post extends Component {
                   </div>
                 )}
 
-                {linkToEmbed && this.props.noImageAttachments && (
+                {linkToEmbed && this.props.noVisualAttachments && (
                   <div className="post-body">
                     {props.isNSFW ? (
                       <div className="nsfw-bar">
@@ -537,15 +534,16 @@ class Post extends Component {
 Post.contextType = PostContext;
 
 function selectState(state, ownProps) {
-  const noImageAttachments = !ownProps.attachments.some(
-    (id) => state.attachments[id]?.mediaType === 'image',
+  const noVisualAttachments = !ownProps.attachments.some(
+    (id) =>
+      state.attachments[id]?.mediaType === 'image' || state.attachments[id]?.mediaType === 'video',
   );
 
   return {
     hideStatus: state.postHideStatuses[ownProps.id] || initialAsyncState,
     translateStatus: state.translationStates[`post:${ownProps.id}`] || initialAsyncState,
     submitMode: state.submitMode,
-    noImageAttachments,
+    noVisualAttachments,
   };
 }
 

@@ -27,6 +27,7 @@ import {
   reloadFeedMiddleware,
   draftsMiddleware,
   resetPasswordCompleteMiddleware,
+  abortableUploadMiddleware,
 } from './middlewares';
 
 import * as reducers from './reducers';
@@ -38,6 +39,7 @@ const middleware = [
   feedViewOptionsMiddleware,
   authMiddleware,
   apiMiddleware,
+  abortableUploadMiddleware,
   asyncMiddleware,
   dataFixMiddleware,
   likesLogicMiddleware,
