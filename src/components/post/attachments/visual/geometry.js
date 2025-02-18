@@ -1,4 +1,4 @@
-export const maxPreviewAspectRatio = 2.5;
+export const maxPreviewAspectRatio = 4;
 
 export const maxEditingPreviewWidth = 400;
 export const maxEditingPreviewHeight = 175;
@@ -9,8 +9,8 @@ export const galleryGap = 8;
 
 export const thumbArea = 210 ** 2; // px^2
 export const singleImageThumbArea = 300 ** 2; // px^2
-export const singleImageMinThumbArea = 100 ** 2; // px^2
 export const singleImageMaxHeight = 400;
+export const singleImageMinSide = 40;
 
 export function fitIntoBox(att, boxWidth, boxHeight, upscale = false) {
   const [width, height] = [att.previewWidth ?? att.width, att.previewHeight ?? att.height];
@@ -26,6 +26,24 @@ export function fitIntoBox(att, boxWidth, boxHeight, upscale = false) {
   }
 
   return { width: Math.round(width / hRatio), height: boxHeight };
+}
+
+export function getSingleImageSize(att, containerWidth) {
+  const { width, height } = fitIntoBox(att, containerWidth, singleImageMaxHeight);
+
+  const area = width * height;
+  if (area < singleImageThumbArea) {
+    return {
+      width: Math.max(width, singleImageMinSide),
+      height: Math.max(height, singleImageMinSide),
+    };
+  }
+  const ratio = Math.sqrt(singleImageThumbArea / area);
+
+  return {
+    width: Math.max(Math.round(width * ratio), singleImageMinSide),
+    height: Math.max(Math.round(height * ratio), singleImageMinSide),
+  };
 }
 
 /**

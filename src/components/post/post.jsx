@@ -463,7 +463,7 @@ class Post extends Component {
                       isNSFW={props.isNSFW}
                       isExpanded={props.isSinglePost}
                     />
-                    {!this.props.noImageAttachments && props.isNSFW && (
+                    {!this.props.noVisualAttachments && props.isNSFW && (
                       <div className="nsfw-bar">
                         Turn the <Link to="/settings/appearance#nsfw">NSFW filter</Link> off to
                         enable previews for sensitive content
@@ -472,7 +472,7 @@ class Post extends Component {
                   </div>
                 )}
 
-                {linkToEmbed && this.props.noImageAttachments && (
+                {linkToEmbed && this.props.noVisualAttachments && (
                   <div className="post-body">
                     {props.isNSFW ? (
                       <div className="nsfw-bar">
@@ -534,15 +534,16 @@ class Post extends Component {
 Post.contextType = PostContext;
 
 function selectState(state, ownProps) {
-  const noImageAttachments = !ownProps.attachments.some(
-    (id) => state.attachments[id]?.mediaType === 'image',
+  const noVisualAttachments = !ownProps.attachments.some(
+    (id) =>
+      state.attachments[id]?.mediaType === 'image' || state.attachments[id]?.mediaType === 'video',
   );
 
   return {
     hideStatus: state.postHideStatuses[ownProps.id] || initialAsyncState,
     translateStatus: state.translationStates[`post:${ownProps.id}`] || initialAsyncState,
     submitMode: state.submitMode,
-    noImageAttachments,
+    noVisualAttachments,
   };
 }
 

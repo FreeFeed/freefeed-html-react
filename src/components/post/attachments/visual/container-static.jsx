@@ -10,13 +10,10 @@ import style from './visual.module.scss';
 import { VisualAttachment } from './attachment';
 import { useItemClickHandler, useLightboxItems, useWidthOf } from './hooks';
 import {
-  fitIntoBox,
   galleryGap,
   getGallerySizes,
+  getSingleImageSize,
   maxPreviewAspectRatio,
-  singleImageMaxHeight,
-  singleImageMinThumbArea,
-  singleImageThumbArea,
   thumbArea,
 } from './geometry';
 
@@ -39,28 +36,10 @@ export function VisualContainerStatic({
   );
 
   const singleImage = attachments.length === 1;
-  const singleImageArea = clamp(
-    attachments[0].width * attachments[0].height,
-    singleImageMinThumbArea,
-    singleImageThumbArea,
-  );
 
-  const sizeRows = getGallerySizes(
-    ratios,
-    containerWidth,
-    singleImage ? singleImageArea : thumbArea,
-    galleryGap,
-  );
-
-  if (singleImage && sizeRows[0].items[0].height > singleImageMaxHeight) {
-    sizeRows[0].items[0] = fitIntoBox(
-      attachments[0],
-      singleImageMaxHeight,
-      singleImageMaxHeight,
-      true,
-    );
-    sizeRows[0].stretched = false;
-  }
+  const sizeRows = singleImage
+    ? [{ items: [getSingleImageSize(attachments[0], containerWidth)], stretched: false }]
+    : getGallerySizes(ratios, containerWidth, thumbArea, galleryGap);
 
   const needFolding = sizeRows.length > 1 && !isExpanded;
   const [isFolded, setIsFolded] = useState(true);
