@@ -45,7 +45,7 @@
   top: 50%;
   left: 0;
   right: auto;
-  transform: translate(-16px, -50%);
+  transform: translate(-6px, -50%);
 
   :global(.dark-theme) & {
     color: $link-color-dim;
