@@ -1,4 +1,4 @@
-export const maxPreviewAspectRatio = 2.5;
+export const maxPreviewAspectRatio = 4;
 
 export const maxEditingPreviewWidth = 400;
 export const maxEditingPreviewHeight = 175;
